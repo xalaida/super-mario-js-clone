@@ -1,13 +1,16 @@
 export default class Engine {
-    constructor(update, render) {
-        this.update = update;
-        this.render = render;
-    }
+  constructor(game) {
+    this.game = game;
+  }
 
-    run() {
-        this.update();
-        this.render();
+  tick() {
+    this.game.update();
+    this.game.render();
+  }
 
-        requestAnimationFrame(() => this.run());
-    }
+  run() {
+    this.tick();
+
+    requestAnimationFrame(() => this.run());
+  }
 }
