@@ -1,39 +1,40 @@
+/* eslint-disable import/extensions */
+import Vector from '../Utils/Vector.js';
+
 export default class Game {
   constructor(controller, view) {
+    // Probably remove controller from here and left only with player
     this.controller = controller;
     this.view = view;
+    this.entities = [];
+    this.friction = 0.9;
+    this.gravity = 3;
   }
 
   update() {
-    console.log('TICK');
+    this.entities.forEach((entity) => {
+      entity.update();
+    });
   }
 
   render() {
     this.view.clear();
+
+    this.entities.forEach((entity) => {
+      entity.render(this.view);
+    });
+
     this.renderControllerStatus();
-    this.renderFps();
   }
 
-  fps() {
-    const lastTimestamp = this.timestamp || 0;
-
-    this.timestamp = performance.now();
-
-    const diff = this.timestamp - lastTimestamp;
-
-    return Math.round(1 / (diff / 1000));
-  }
-
-  renderFps() {
-    this.view.context.font = '16px';
-    this.view.context.fillText(`FPS: ${this.fps()}`, 120, 10);
+  add(entity) {
+    this.entities.push(entity);
   }
 
   renderControllerStatus() {
-    this.view.context.font = '16px';
-    this.view.context.fillText(`UP: ${this.controller.state.up ? 'PRESSED' : 'NO'}`, 10, 10);
-    this.view.context.fillText(`LEFT: ${this.controller.state.left ? 'PRESSED' : 'NO'}`, 10, 30);
-    this.view.context.fillText(`RIGHT: ${this.controller.state.right ? 'PRESSED' : 'NO'}`, 10, 50);
-    this.view.context.fillText(`DOWN: ${this.controller.state.down ? 'PRESSED' : 'NO'}`, 10, 70);
+    this.view.text(`UP: ${this.controller.state.up ? 'PRESSED' : 'NO'}`, new Vector(10, 20));
+    this.view.text(`LEFT: ${this.controller.state.left ? 'PRESSED' : 'NO'}`, new Vector(10, 40));
+    this.view.text(`RIGHT: ${this.controller.state.right ? 'PRESSED' : 'NO'}`, new Vector(10, 60));
+    this.view.text(`DOWN: ${this.controller.state.down ? 'PRESSED' : 'NO'}`, new Vector(10, 80));
   }
 }

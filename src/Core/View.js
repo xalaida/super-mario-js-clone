@@ -1,20 +1,26 @@
 export default class View {
   // TODO: add height, width
 
-  // TODO: add clear method
-
   constructor(context) {
     this.context = context;
   }
 
-  render() {
+  clear() {
+    this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
+  }
+
+  rectangle(vector, rect, color = '#1A202C') {
     this.context.save();
-    this.context.fillStyle = 'pink';
-    this.context.fillRect(0, 0, this.context.canvas.width, this.context.canvas.height);
+    this.context.fillStyle = color;
+    this.context.fillRect(Math.floor(vector.x), Math.floor(vector.y), rect.width, rect.height);
     this.context.restore();
   }
 
-  clear() {
-    this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
+  text(text, vector, color = '#1A202C', size = '14px') {
+    this.context.save();
+    this.context.font = size;
+    this.context.fillStyle = color;
+    this.context.fillText(text, vector.x, vector.y);
+    this.context.restore();
   }
 }
