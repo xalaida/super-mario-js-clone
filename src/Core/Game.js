@@ -8,7 +8,7 @@ export default class Game {
     this.view = view;
     this.entities = [];
     this.friction = 0.9;
-    this.gravity = 3;
+    this.gravity = 0.5;
   }
 
   update() {
