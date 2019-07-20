@@ -12,7 +12,7 @@ export default class Engine {
   tick() {
     // this.game.update(delta);
     // this.game.render(interpolation);
-    this.game.update(this.deltaTime / 1000);
+    this.game.update(this.accumulatedTime / 1000);
     this.game.render();
   }
 
@@ -37,7 +37,7 @@ export default class Engine {
   }
 
   run() {
-    this.loop(performance.now());
+    this.loop(0);
   }
 
   // TODO: add function to run simple loop

@@ -8,18 +8,19 @@ export default class Player {
   constructor(controller, friction, gravity, image) {
     this.controller = controller;
     this.friction = friction;
-    this.gravity = 50;
+    this.gravity = 5;
     this.image = image;
     this.color = '#718096';
     this.size = new Size(20, 20);
-    this.position = new Vector(64, 180);
-    this.velocity = new Vector(100, -100);
+    this.position = new Vector(100, 300);
+    this.velocity = new Vector(0, -50);
     this.jumping = false;
     this.tracks = [];
   }
 
   update(delta) {
-    this.position.x += this.velocity.x * delta;
+    console.log(delta);
+    // this.position.x += this.velocity.x * delta;
     this.position.y += this.velocity.y * delta;
     this.velocity.y += this.gravity * delta;
 
@@ -128,7 +129,7 @@ export default class Player {
   renderDebug(view) {
     view.text(`Velocity X: ${this.velocity.x}`, new Vector(200, 20));
     view.text(`Velocity Y: ${this.velocity.y}`, new Vector(200, 40));
-    view.text(`Position X: ${this.position.y}`, new Vector(200, 60));
+    view.text(`Position X: ${this.position.x}`, new Vector(200, 60));
     view.text(`Position Y: ${this.position.y}`, new Vector(200, 80));
   }
 }
