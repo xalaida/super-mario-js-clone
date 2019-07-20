@@ -3,6 +3,8 @@ import Vector from '../Utils/Vector.js';
 
 export default class Game {
   constructor(controller, view) {
+    // TODO: add World object
+    // TODO: add layers to allow draw entities at the correct layer
     // Probably remove controller from here and left only with player
     this.controller = controller;
     this.view = view;
@@ -11,9 +13,9 @@ export default class Game {
     this.gravity = 0.5;
   }
 
-  update() {
+  update(delta) {
     this.entities.forEach((entity) => {
-      entity.update();
+      entity.update(delta);
     });
   }
 

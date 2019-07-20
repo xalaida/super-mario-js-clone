@@ -1,5 +1,5 @@
 export default class CanvasFactory {
-  static generate(size, appendTo = null) {
+  static create(size, appendTo = null) {
     const canvas = document.createElement('canvas');
 
     canvas.width = size.width;

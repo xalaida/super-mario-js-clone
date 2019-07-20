@@ -33,7 +33,7 @@ export default class View {
     this.context.drawImage(
       image.source,
       image.position.x, image.position.y, image.size.width, image.size.height,
-      position.x, position.y, size.width, size.height,
+      Math.floor(position.x), Math.floor(position.y), size.width, size.height,
     );
   }
 }

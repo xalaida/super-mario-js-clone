@@ -13,11 +13,15 @@ import Position from './src/Utils/Position.js';
 import Sprite from './src/Graphic/Sprite.js';
 
 // View init
-const view = new View(CanvasFactory.generate(new Size(640, 480), document.body));
+const view = new View(CanvasFactory.create(new Size(640, 480), document.body));
 
 // TODO: resolve with promise loader (add Promise.all([spriteLoader, levelBuilder]).then(game.start()))
-const sprite = new Sprite('src/Resources/world-sprite.png');
-sprite.define('world-ground', new Position(0, 0), new Size(16, 16));
+const worldSprite = new Sprite('src/Resources/world-sprite.png');
+worldSprite.define('ground', new Position(0, 0), new Size(16, 16));
+worldSprite.define('bricks', new Position(16, 0), new Size(16, 16));
+
+const charactersSprite = new Sprite('src/Resources/characters-sprite.gif');
+charactersSprite.define('little-mario', new Position(276, 44), new Size(16, 16));
 
 // Controller
 const controller = new Controller();
@@ -28,13 +32,14 @@ const engine = new Engine(game);
 
 // Game scene
 // TODO: ground building (extract into level builder)
-game.add(new Ground(new Vector(100, 100), new Size(50, 50), sprite.get('world-ground')));
-game.add(new Ground(new Vector(150, 100), new Size(50, 50), sprite.get('world-ground')));
-game.add(new Ground(new Vector(200, 100), new Size(50, 50), sprite.get('world-ground')));
-game.add(new Ground(new Vector(250, 100), new Size(20, 20), sprite.get('world-ground')));
+
+for (let i = 0; i < 10; i += 1) {
+  game.add(new Ground(new Vector(i * 16, 200 + 20), new Size(16, 16), worldSprite.get('ground')));
+  game.add(new Ground(new Vector(i * 16, 200 + 20 + 16), new Size(16, 16), worldSprite.get('bricks')));
+}
 
 game.add(new Fps());
-game.add(new Player(controller, game.friction, game.gravity));
+game.add(new Player(controller, game.friction, game.gravity, charactersSprite.get('little-mario')));
 
 // Events registering
 // TODO: Probably extract this event into their own classes
