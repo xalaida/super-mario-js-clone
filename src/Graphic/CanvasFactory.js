@@ -1,9 +1,9 @@
-export default class ContextFactory {
-  static generate(width = 640, height = 480, appendTo = null) {
+export default class CanvasFactory {
+  static generate(size, appendTo = null) {
     const canvas = document.createElement('canvas');
 
-    canvas.width = width;
-    canvas.height = height;
+    canvas.width = size.width;
+    canvas.height = size.height;
 
     if (appendTo) {
       appendTo.appendChild(canvas);

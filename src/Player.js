@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign,import/extensions */
 import Vector from './Utils/Vector.js';
-import Rect from './Utils/Rect.js';
+import Size from './Utils/Size.js';
 
 const FLOOR = 200;
 
@@ -10,7 +10,7 @@ export default class Player {
     this.friction = friction;
     this.gravity = 0.5;
     this.color = '#718096';
-    this.size = new Rect(10, 20);
+    this.size = new Size(10, 20);
     this.position = new Vector(100, 100);
     this.velocity = new Vector(0, 0);
     this.jumping = false;
@@ -22,6 +22,8 @@ export default class Player {
       this.moveLeft();
     }
 
+    // TODO: add two functions: isPressed('right'),
+    // TODO: maybe add events to controller object, bind all move functions to them and listen keyUpOn('up') which set isJumpAllowed = true;
     if (this.controller.state.right) {
       this.moveRight();
     }
@@ -36,9 +38,13 @@ export default class Player {
     this.position = this.position.plus(this.velocity);
 
     // TODO: round parameter on low values
+    // TODO: add Vector function to plus only x or y (e.g. plusX(15), plusY(20))
     this.velocity = this.velocity.plus(new Vector(null, this.gravity));
-    this.velocity = this.velocity.multiply(new Vector(this.friction, null));
+    this.velocity = this.velocity.multiply(new Vector(this.friction, null)); // TODO: probably add friction also to Y
 
+    // TODO: create World class and add to it collide(player) method which Game class will handle inside update loop
+    // TODO: also add isCollidable prop to check if it is not Fps, Background or any other not
+    //  colidable entity (in the future will be fixed with grid and availability of location vector)
     if (this.position.y >= FLOOR) {
       this.velocity = this.velocity.multiply(new Vector(null, 0));
       this.position = new Vector(this.position.x, FLOOR);
@@ -68,7 +74,7 @@ export default class Player {
 
   track() {
     if (this.currentFrame === undefined) {
-      this.currentFrame = 3;
+      this.currentFrame = 2;
     }
 
     this.currentFrame -= 1;
@@ -79,7 +85,7 @@ export default class Player {
       console.log('unshifted');
       console.log(this.position);
       console.log(this.tracks);
-      this.currentFrame = 5;
+      this.currentFrame = 2;
     }
   }
 
