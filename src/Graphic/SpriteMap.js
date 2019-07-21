@@ -1,10 +1,9 @@
 /* eslint-disable no-param-reassign,import/extensions */
 import GameImage from './Image.js';
 
-export default class Sprite {
+export default class SpriteMap {
   constructor(source) {
-    this.source = new Image();
-    this.source.src = source;
+    this.source = source;
     this.definitions = new Map();
   }
 
