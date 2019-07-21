@@ -1,4 +1,4 @@
-export default class Sprite {
+export default class Tile {
   constructor(image, position, size) {
     this.image = image;
     this.position = position;
