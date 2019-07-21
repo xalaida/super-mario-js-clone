@@ -15,4 +15,11 @@ export default class Vector extends Position {
       vector.y === null ? this.y : this.y * vector.y,
     );
   }
+
+  times(times) {
+    return new Vector(
+      this.x * times,
+      this.y * times,
+    );
+  }
 }
