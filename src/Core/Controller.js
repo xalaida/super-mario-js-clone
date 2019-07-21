@@ -1,37 +1,55 @@
 export default class Controller {
   constructor(controls) {
-    this.state = {
-      up: false,
-      down: false,
-      left: false,
-      right: false,
-    };
-
-    this.controls = Object.assign(Controller.getDefaultControls(), controls)
+    this.controls = Object.assign(Controller.defaultControls(), controls);
+    this.keys = new Map();
+    this.state = new Map();
+    this.init();
+    this.listenKeys();
   }
 
-  static getDefaultControls() {
+  static defaultControls() {
     return {
-      left: 'ArrowLeft',
-      up: 'ArrowUp',
-      right: 'ArrowRight',
-      down: 'ArrowDown',
+      ArrowLeft: 'left',
+      ArrowUp: 'up',
+      ArrowRight: 'right',
+      ArrowDown: 'down',
     };
   }
 
-  handleKeyUp(event) {
-    this.toggleKey(event.key, false);
+  init() {
+    Object.keys(this.controls).forEach((key) => {
+      this.keys.set(key, this.controls[key]);
+    });
+
+    Object.keys(this.controls).forEach((key) => {
+      this.state.set(this.controls[key], false);
+    });
   }
 
-  handleKeyDown(event) {
-    this.toggleKey(event.key, true);
+  listenKeys() {
+    window.addEventListener('keydown', this.handleKeyDownEvent.bind(this));
+    window.addEventListener('keyup', this.handleKeyUpEvent.bind(this));
   }
 
-  toggleKey(code, status) {
-    for (let key in this.controls) {
-      if (code === this.controls[key]) {
-        this.state[key] = status;
-      }
+  handleKeyUpEvent(event) {
+    this.handleKeyEvent(event, false);
+  }
+
+  handleKeyDownEvent(event) {
+    this.handleKeyEvent(event, true);
+  }
+
+  handleKeyEvent(event, state) {
+    if (!this.keys.has(event.key)) {
+      return;
     }
+
+    event.preventDefault();
+
+    this.state.set(this.keys.get(event.key), state);
+  }
+
+  isPressed(id) {
+    return this.state.get(id);
   }
 }
