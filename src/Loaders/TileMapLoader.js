@@ -14,7 +14,7 @@ export default class TileMapLoader {
             const char = line[x];
 
             if (mapping[char]) {
-              tileMap.add(x, y, sprite.get(mapping[char]));
+              tileMap.add(x, y, mapping[char], sprite.get(mapping[char]));
             }
           }
         }
