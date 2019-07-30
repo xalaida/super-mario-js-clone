@@ -22,6 +22,15 @@ export default class View {
     this.context.restore();
   }
 
+  outline(position, size, color = 'green') {
+    this.context.save();
+    this.context.strokeStyle = color;
+    this.context.beginPath();
+    this.context.rect(position.x, position.y, size.width, size.height);
+    this.context.stroke();
+    this.context.restore();
+  }
+
   /**
    * Render image at the position with the given size
    *
