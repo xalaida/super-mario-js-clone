@@ -1,17 +1,17 @@
-/* eslint-disable import/extensions */
 import Game from './src/Core/Game.js';
 import Engine from './src/Core/Engine.js';
 import Controller from './src/Core/Controller.js';
 import View from './src/Graphic/View.js';
 import CanvasFactory from './src/Graphic/CanvasFactory.js';
-import Fps from './src/Fps.js';
 import Player from './src/Player.js';
 import Size from './src/Utils/Size.js';
-import Position from './src/Utils/Position.js';
+import Vector from './src/Utils/Vector.js';
 import SpriteMap from './src/Graphic/SpriteMap.js';
 import TileMap from './src/Game/TileMap.js';
 import ImageLoader from './src/Loaders/ImageLoader.js';
 import TileMapLoader from './src/Loaders/TileMapLoader.js';
+import Camera from './src/Graphic/Camera.js';
+import MouseController from './src/Core/MouseController.js';
 
 // TODO: left all hard-coded logic here and extract independent logic into classes
 
@@ -21,9 +21,9 @@ window.addEventListener('load', () => {
       .then((image) => {
         const sprite = new SpriteMap(image);
 
-        sprite.define('sky', new Position(48, 361), new Size(16, 16));
-        sprite.define('ground', new Position(0, 0), new Size(16, 16));
-        sprite.define('bricks', new Position(16, 0), new Size(16, 16));
+        sprite.define('sky', new Vector(48, 361), new Size(16, 16));
+        sprite.define('ground', new Vector(0, 0), new Size(16, 16));
+        sprite.define('bricks', new Vector(16, 0), new Size(16, 16));
 
         return sprite;
       })
@@ -43,23 +43,37 @@ window.addEventListener('load', () => {
       .then((image) => {
         const sprite = new SpriteMap(image);
 
-        sprite.define('little-mario', new Position(276, 44), new Size(16, 16));
+        sprite.define('little-mario', new Vector(276, 44), new Size(16, 16));
 
         return new Player(new Controller(), sprite.get('little-mario'));
       }),
   ]).then(([tileMap, player]) => {
-    console.log(tileMap);
-
     // View init
     const view = new View(CanvasFactory.create(new Size(640, 480), document.body));
 
+    // Add camera for scrolling view
+    const camera = new Camera();
+
     // Game init
-    const game = new Game(view, tileMap);
+    const game = new Game(view, tileMap, camera);
     const engine = new Engine(game);
+
+    const mouseController = new MouseController(view.context);
+
+    // Camera simple mouse scroll
+    mouseController.onRightButtonDrag((currentPosition, previousPosition) => {
+      camera.position = camera.position.minusX(currentPosition.minus(previousPosition));
+    });
+
+    // player mouse control debugger
+    mouseController.onLeftClick((position) => {
+      player.velocity = Vector.zero();
+      player.position = player.position.plus(position);
+    });
 
     // Add base entities
     game.add(player);
-    game.add(new Fps());
+    // game.add(new Fps());
 
     engine.run();
   });
