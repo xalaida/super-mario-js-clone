@@ -12,6 +12,10 @@ export default class Matrix {
   }
 
   get(x, y) {
+    if (this.grid[x] === undefined || this.grid[x][y] === undefined) {
+      return undefined;
+    }
+
     return this.grid[x][y];
   }
 
