@@ -1,30 +1,73 @@
 /* eslint-disable import/extensions */
 import Tile from './Tile.js';
 import Matrix from '../Utils/Matrix.js';
-import Position from '../Utils/Position.js';
+import Vector from '../Utils/Vector.js';
 
 export default class TileMap {
+  // TODO: add rule if checking outside the matrix
+
   constructor(tileSize) {
     this.tileSize = tileSize;
     this.tiles = new Matrix();
   }
 
-  add(x, y, image) {
-    this.tiles.set(x, y, new Tile(image, this.toPosition(x, y), this.tileSize));
+  // TODO: probably extract x, y into Coordinates class (or use the existing Vector)
+  add(x, y, type, image) {
+    this.tiles.set(x, y, new Tile(type, image, this.toPosition(x, y), this.tileSize));
   }
 
-  toPosition(x, y) {
-    return new Position(
-      Math.floor(x) * this.tileSize.width,
-      Math.floor(y) * this.tileSize.height,
-    );
+  get(x, y) {
+    // TODO: fix if matrix has undefined coordinates
+    return this.tiles.get(x, y);
   }
 
-  toIndices(position) {
-    // TODO: feature method
+  findByPosition(position) {
+    const [x, y] = this.toIndices(position);
+    return this.get(x, y);
+  }
+
+  /**
+   * NOTICE! Method includes left and top side of the current tile
+   * and does not include right and bottom side of the next tile
+   *
+   * @param bounds
+   * @returns {Array}
+   */
+  findInBounds(bounds) {
+    // TODO: use toIndices()
+    const x1 = Math.floor(bounds.left() / this.tileSize.width);
+    const y1 = Math.floor(bounds.top() / this.tileSize.height);
+
+    // TODO: add method for toIndices but with ceiling
+    const x2 = Math.ceil(bounds.right() / this.tileSize.width);
+    const y2 = Math.ceil(bounds.bottom() / this.tileSize.height);
+
+    const tiles = [];
+
+    for (let x = x1; x < x2; x += 1) {
+      for (let y = y1; y < y2; y += 1) {
+        tiles.push(this.get(x, y));
+      }
+    }
+
+    return tiles;
   }
 
   forEach(callback) {
     this.tiles.forEach(callback);
+  }
+
+  toPosition(x, y) {
+    return new Vector(
+      x * this.tileSize.width,
+      y * this.tileSize.height,
+    );
+  }
+
+  toIndices(position) {
+    return [
+      Math.floor(position.x / this.tileSize.width),
+      Math.floor(position.y / this.tileSize.height),
+    ];
   }
 }
