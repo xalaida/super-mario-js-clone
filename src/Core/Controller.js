@@ -4,7 +4,7 @@ export default class Controller {
     this.keys = new Map();
     this.state = new Map();
     this.init();
-    this.listenKeys();
+    this.listenEvents();
   }
 
   static defaultControls() {
@@ -26,7 +26,8 @@ export default class Controller {
     });
   }
 
-  listenKeys() {
+  listenEvents() {
+    // TODO: maybe swap with context instead of window
     window.addEventListener('keydown', this.handleKeyDownEvent.bind(this));
     window.addEventListener('keyup', this.handleKeyUpEvent.bind(this));
   }
