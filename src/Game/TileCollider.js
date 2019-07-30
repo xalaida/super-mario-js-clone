@@ -11,6 +11,10 @@ export default class TileCollider {
 
     // TODO: probably extract into player some logic
     this.checkingTiles.forEach((tile) => {
+      if (!tile) {
+        return;
+      }
+
       // TODO: add colladable tiles type (maybe use for this separate layer)
       if (tile.type === 'sky') {
         return;

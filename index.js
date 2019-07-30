@@ -68,7 +68,8 @@ window.addEventListener('load', () => {
     // player mouse control debugger
     mouseController.onLeftClick((position) => {
       player.velocity = Vector.zero();
-      player.position = player.position.plus(position);
+      // player.position = position;
+      player.position = camera.position.plus(position);
     });
 
     // Add base entities
