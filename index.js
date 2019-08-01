@@ -15,6 +15,8 @@ import MouseController from './src/Core/MouseController.js';
 
 // TODO: left all hard-coded logic here and extract independent logic into classes
 
+// TODO: separate engine from mario code
+
 window.addEventListener('load', () => {
   Promise.all([
     ImageLoader.load('src/Resources/world-sprite.png')
@@ -41,18 +43,21 @@ window.addEventListener('load', () => {
 
     ImageLoader.load('src/Resources/characters-sprite.gif')
       .then((image) => {
-        const sprite = new SpriteMap(image);
+        const spriteMap = new SpriteMap(image);
 
-        sprite.define('little-mario', new Vector(276, 44), new Size(16, 16));
+        spriteMap.define('mario-idle', new Vector(276, 44), new Size(16, 16));
+        spriteMap.define('mario-run-1', new Vector(290, 44), new Size(16, 16));
+        spriteMap.define('mario-run-2', new Vector(304, 44), new Size(16, 16));
+        spriteMap.define('mario-run-3', new Vector(321, 44), new Size(16, 16));
 
-        return new Player(new Controller(), sprite.get('little-mario'));
+        return new Player(new Controller(), spriteMap);
       }),
   ]).then(([tileMap, player]) => {
     // View init
     const view = new View(CanvasFactory.create(new Size(640, 480), document.body));
 
     // Add camera for scrolling view
-    const camera = new Camera();
+    const camera = new Camera(Vector.zero(), new Size(600, 400));
 
     // Game init
     const game = new Game(view, tileMap, camera);

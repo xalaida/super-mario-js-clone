@@ -2,6 +2,7 @@
 
 import TileCollider from '../Game/TileCollider.js';
 
+// TODO: add options object with some default values and inject it to here
 export default class Game {
   constructor(view, tileMap, camera) {
     // TODO: add World object
@@ -38,12 +39,14 @@ export default class Game {
     this.view.clear();
 
     // TODO: feature game layers (UI layer, Background layer, Entities Layer, etc)
-    this.tileMap.forEach((tile) => {
-      tile.render(this.view, this.camera);
-    });
+    // TODO: draw only the tiles from a camera bounds
+    this.tileMap.render(this.view, this.camera);
 
     // TODO: debug layer
     this.tileCollider.render(this.view, this.camera);
+
+    // Render camera debug
+    this.camera.render(this.view);
 
     // TODO: feature game layers (UI layer, Background layer, Entities Layer, etc)
     this.entities.forEach((entity) => {

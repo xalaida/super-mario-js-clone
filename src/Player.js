@@ -3,19 +3,25 @@ import Vector from './Utils/Vector.js';
 import Size from './Utils/Size.js';
 import Bounds from './Utils/Bounds.js';
 
-const FLOOR = 204;
+const UNIT = 100;
 
 export default class Player {
-  constructor(controller, image) {
+  constructor(controller, spriteMap) {
     this.controller = controller;
     this.gravity = new Vector(0, 3000);
-    this.image = image;
+    this.spriteMap = spriteMap;
     this.color = '#718096';
     this.size = new Size(14, 16);
     this.position = new Vector(100, 200);
     this.velocity = Vector.zero();
-    this.maxSpeed = 100;
+    this.maxSpeed = UNIT * 10;
     this.jumping = false;
+
+    // Animation data
+    this.tickCount = 0;
+    this.ticksPerFrame = 10;
+
+    this.initFrameSets();
   }
 
   getBounds() {
@@ -100,8 +106,77 @@ export default class Player {
     this.renderHitBox(view, camera);
   }
 
+  /**
+   * Animations
+   */
+
+  initFrameSets() {
+    this.idleFrameSet = ['mario-idle'];
+    this.movingFrameSet = ['mario-run-1', 'mario-run-2', 'mario-run-3'];
+  }
+
+  setAnimationMode(mode) {
+    if (this.animationMode === mode) {
+      return;
+    }
+
+    console.log(`toggle animation mode to ${mode}`);
+
+    this.animationMode = mode;
+    this.tickCount = 0;
+    this.frameIndex = 0;
+  }
+
+  getAnimationFrame() {
+    console.log(this.frameIndex);
+    if (this.animationMode === 'moving') {
+      return this.movingFrameSet[this.frameIndex];
+    }
+
+    return this.idleFrameSet[this.frameIndex];
+  }
+
+  updateAnimationFrame() {
+    this.tickCount += 1;
+
+    if (this.tickCount > this.ticksPerFrame) {
+      this.nextAnimationFrame();
+      this.tickCount = 0;
+    }
+  }
+
+  nextAnimationFrame() {
+    if (this.animationMode === 'moving') {
+      this.frameIndex = (this.frameIndex + 1) % this.movingFrameSet.length;
+    }
+
+    if (this.animationMode === 'idle') {
+      this.frameIndex = 0;
+    }
+  }
+
+  animate() {
+    // Detect animation mode
+    if (this.velocity.x === 0) {
+      this.setAnimationMode('idle');
+    }
+
+    if (this.velocity.x > 0) {
+      this.setAnimationMode('moving');
+    }
+
+    // Get frame
+    const frame = this.getAnimationFrame();
+
+    // Update animation frames
+    this.updateAnimationFrame();
+
+    // Return current frame
+    return this.spriteMap.get(frame);
+  }
+
   renderEntity(view, camera) {
-    view.image(this.image, this.position.minus(camera.position), this.size);
+    view.image(this.animate(), this.position.minus(camera.position), this.size);
   }
 
   renderDebug(view) {

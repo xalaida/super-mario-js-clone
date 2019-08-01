@@ -19,6 +19,7 @@ export default class Matrix {
     return this.grid[x][y];
   }
 
+  // TODO: check usage
   forEach(callback) {
     this.grid.forEach((row) => {
       row.forEach((cell) => {
