@@ -8,7 +8,6 @@ export default class Engine {
   constructor(game, fps = 60) {
     this.game = game;
     this.fps = fps;
-
     this.deltaTime = 1000 / fps;
     this.previousTimestamp = 0;
     this.accumulatedTime = 0;
@@ -60,7 +59,16 @@ export default class Engine {
    */
   loop(timestamp) {
     // A difference with the previous timestamp
-    this.accumulatedTime += (timestamp - this.previousTimestamp);
+    // Max allowed 1000ms which is the fix for dead chrome tabs
+    // const delta = Math.min(1000, timestamp - this.previousTimestamp);
+    const delta = timestamp - this.previousTimestamp;
+
+
+    if (delta > 100) {
+    console.log(delta);
+    }
+
+    this.accumulatedTime += delta;
 
     // Update the previous timestamp for the next tick
     this.previousTimestamp = timestamp;
@@ -68,19 +76,22 @@ export default class Engine {
     // Run loop only while accumulated time is enough for next tick (bigger then delta frames time)
     this.currentStepTicks = 0;
     while (this.accumulatedTime > this.deltaTime) {
+      // TODO: refactor as only updates
       this.tick();
       this.accumulatedTime -= this.deltaTime;
       this.currentStepTicks += 1;
 
       if (this.currentStepTicks > this.maxStepTicks) {
-        this.stop();
+        this.preventCrash();
       }
     }
 
-    requestAnimationFrame(() => this.loop(performance.now()));
+    // TODO: add renders only here
+
+    requestAnimationFrame(this.loop.bind(this));
   }
 
-  stop() {
+  preventCrash() {
     this.accumulatedTime = 0;
     throw new Error('Game loop reach max tick iterations per step');
   }
