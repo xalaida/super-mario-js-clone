@@ -2,6 +2,7 @@
 import Tile from './Tile.js';
 import Matrix from '../Utils/Matrix.js';
 import Vector from '../Utils/Vector.js';
+import Bounds from '../Utils/Bounds.js';
 
 export default class TileMap {
   // TODO: add rule if checking outside the matrix
@@ -46,15 +47,30 @@ export default class TileMap {
 
     for (let x = x1; x < x2; x += 1) {
       for (let y = y1; y < y2; y += 1) {
-        tiles.push(this.get(x, y));
+        const tile = this.get(x, y);
+
+        if (tile) {
+          tiles.push(tile);
+        }
       }
     }
 
     return tiles;
   }
 
+  // TODO: check usage
   forEach(callback) {
     this.tiles.forEach(callback);
+  }
+
+  render(view, camera) {
+    // TODO: add buffer supports
+    // TODO: if camera position does not change, do not rerender buffer and background at all
+
+    this.findInBounds(new Bounds(camera.position, camera.size))
+      .forEach((tile) => {
+        tile.render(view, camera);
+      });
   }
 
   toPosition(x, y) {
