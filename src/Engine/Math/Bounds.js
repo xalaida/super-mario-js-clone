@@ -1,4 +1,3 @@
-/* eslint-disable import/extensions */
 import Vector from './Vector.js';
 
 export default class Bounds {
@@ -7,27 +6,27 @@ export default class Bounds {
     this.size = size;
   }
 
-  left() {
+  get left() {
     return this.position.x;
   }
 
-  top() {
+  get top() {
     return this.position.y;
   }
 
-  right() {
+  get right() {
     return this.position.x + this.size.width;
   }
 
-  bottom() {
+  get bottom() {
     return this.position.y + this.size.height;
   }
 
-  topLeft() {
+  get start() {
     return this.position;
   }
 
-  bottomRight() {
+  get end() {
     return this.position.plus(new Vector(this.size.width, this.size.height));
   }
 }
