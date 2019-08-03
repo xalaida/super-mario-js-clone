@@ -1,9 +1,18 @@
 export default class CanvasFactory {
-  static create(size, appendTo = null, disableContextMenu = true) {
+  /**
+   * Create canvas for game rendering
+   *
+   * @param width
+   * @param height
+   * @param appendTo
+   * @param disableContextMenu
+   * @returns {CanvasRenderingContext2D}
+   */
+  static createContext(width, height, appendTo = null, disableContextMenu = true) {
     const canvas = document.createElement('canvas');
 
-    canvas.width = size.width;
-    canvas.height = size.height;
+    canvas.width = width;
+    canvas.height = height;
 
     if (appendTo) {
       appendTo.appendChild(canvas);
