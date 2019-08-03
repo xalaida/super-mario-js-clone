@@ -5,6 +5,12 @@ export default class Config {
     this.showTileGrid = false;
     this.width = 400;
     this.height = 400;
+
+    this.debug = {
+      fps: false,
+      tiles: false,
+    };
+
     this.merge(options);
   }
 

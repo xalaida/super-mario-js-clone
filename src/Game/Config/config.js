@@ -1,7 +1,7 @@
 import Config from '../../Engine/Config/Config.js';
 
-export default new Config({
-  fps: 15,
+const config = new Config({
+  fps: 60,
   width: 640,
   height: 480,
   tiles: {
@@ -10,6 +10,9 @@ export default new Config({
       height: 16,
     },
   },
-  showFps: true,
-  showTileGrid: true,
 });
+
+config.debug.fps = true;
+config.debug.tiles = true;
+
+export default config;
