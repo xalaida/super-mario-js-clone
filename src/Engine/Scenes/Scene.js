@@ -2,9 +2,15 @@ export default class Scene {
   /**
    * Load game scene
    * Used for loading all scene resources, e.g. textures, sounds, etc.
+   * Must must return the Promise
+   *
+   * @returns {Promise}
    */
   load() {
-    console.log(`Scene ${this.constructor.name} is loaded`);
+    return new Promise((resolve) => {
+      console.log(`Scene ${this.constructor.name} is loaded`);
+      resolve();
+    });
   }
 
   /**
