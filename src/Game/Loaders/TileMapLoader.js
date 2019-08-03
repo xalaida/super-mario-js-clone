@@ -1,9 +1,8 @@
-/* eslint-disable import/extensions */
-import TxtLoader from './TxtLoader.js';
+import FileLoader from '../../Engine/Loaders/FileLoader.js';
 
 export default class TileMapLoader {
   static fromTxt(url, tileMap, mapping, sprite) {
-    return TxtLoader.load(url)
+    return FileLoader.load(url)
       .then((content) => {
         const lines = content.split(/[\n]+/g);
 
@@ -14,12 +13,10 @@ export default class TileMapLoader {
             const char = line[x];
 
             if (mapping[char]) {
-              tileMap.add(x, y, mapping[char], sprite.get(mapping[char]));
+              tileMap.add(x, y, sprite.get(mapping[char].image), mapping[char].options);
             }
           }
         }
-
-        return tileMap;
       });
   }
 }
