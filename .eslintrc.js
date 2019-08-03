@@ -7,6 +7,7 @@ module.exports = {
     'airbnb-base',
   ],
   globals: {
+    game: 'readonly',
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
   },
@@ -16,5 +17,6 @@ module.exports = {
   },
   rules: {
     "import/extensions": "off",
+    "no-console": "off",
   },
 };
