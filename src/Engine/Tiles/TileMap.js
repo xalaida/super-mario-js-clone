@@ -1,25 +1,22 @@
-/* eslint-disable import/extensions */
+import Grid from '../Math/Grid.js';
+import Vector from '../Math/Vector.js';
 import Tile from './Tile.js';
-import Matrix from '../Utils/Matrix.js';
-import Vector from '../Utils/Vector.js';
-import Bounds from '../Utils/Bounds.js';
 
 export default class TileMap {
-  // TODO: add rule if checking outside the matrix
-
-  constructor(tileSize) {
+  constructor(config, tileSize) {
+    this.config = config;
     this.tileSize = tileSize;
-    this.tiles = new Matrix();
+    this.tiles = new Grid();
   }
 
-  // TODO: probably extract x, y into Coordinates class (or use the existing Vector)
-  add(x, y, type, image) {
-    this.tiles.set(x, y, new Tile(type, image, this.toPosition(x, y), this.tileSize));
+  add(xIndex, yIndex, image, options = {}) {
+    const tile = new Tile(this.toPosition(xIndex, yIndex), this.tileSize, image, options);
+    this.tiles.set(xIndex, yIndex, tile);
   }
 
-  get(x, y) {
+  get(xIndex, yIndex) {
     // TODO: fix if matrix has undefined coordinates
-    return this.tiles.get(x, y);
+    return this.tiles.get(xIndex, yIndex);
   }
 
   findByPosition(position) {
@@ -35,13 +32,15 @@ export default class TileMap {
    * @returns {Array}
    */
   findInBounds(bounds) {
+    // TODO: try to use always CEIL for current game model
+
     // TODO: use toIndices()
-    const x1 = Math.floor(bounds.left() / this.tileSize.width);
-    const y1 = Math.floor(bounds.top() / this.tileSize.height);
+    const x1 = Math.floor(bounds.left / this.tileSize.width);
+    const y1 = Math.floor(bounds.top / this.tileSize.height);
 
     // TODO: add method for toIndices but with ceiling
-    const x2 = Math.ceil(bounds.right() / this.tileSize.width);
-    const y2 = Math.ceil(bounds.bottom() / this.tileSize.height);
+    const x2 = Math.ceil(bounds.right / this.tileSize.width);
+    const y2 = Math.ceil(bounds.bottom / this.tileSize.height);
 
     const tiles = [];
 
@@ -67,9 +66,13 @@ export default class TileMap {
     // TODO: add buffer supports
     // TODO: if camera position does not change, do not rerender buffer and background at all
 
-    this.findInBounds(new Bounds(camera.position, camera.size))
+    this.findInBounds(camera.bounds)
       .forEach((tile) => {
         tile.render(view, camera);
+
+        if (this.config.debug.tiles) {
+          view.outline(tile.position, tile.size, '#5993ab61');
+        }
       });
   }
 
@@ -82,8 +85,8 @@ export default class TileMap {
 
   toIndices(position) {
     return [
-      Math.floor(position.x / this.tileSize.width),
-      Math.floor(position.y / this.tileSize.height),
+      Math.ceil(position.x / this.tileSize.width),
+      Math.ceil(position.y / this.tileSize.height),
     ];
   }
 }
