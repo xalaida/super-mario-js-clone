@@ -1,4 +1,4 @@
-import Vector from '../Utils/Vector.js';
+import Vector from '../Math/Vector.js';
 
 const LEFT_BUTTON = 0;
 const RIGHT_BUTTON = 2;
