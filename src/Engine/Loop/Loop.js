@@ -7,7 +7,6 @@ export default class Loop {
    */
   constructor(game, fps = 60) {
     this.game = game;
-    this.fps = fps;
     this.frameStep = 1000 / fps;
     this.previousTimestamp = 0;
     this.accumulation = 0;
