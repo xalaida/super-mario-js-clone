@@ -1,50 +1,46 @@
-/* eslint-disable no-param-reassign,import/extensions */
-import Vector from './Utils/Vector.js';
-import Size from './Utils/Size.js';
-import Bounds from './Utils/Bounds.js';
+import Vector from '../../Engine/Math/Vector.js';
+import Size from '../../Engine/Math/Size.js';
+import Bounds from '../../Engine/Math/Bounds.js';
+import AnimationSwitcher from '../../Engine/Graphic/Animations/AnimationSwitcher.js';
 
-const UNIT = 100;
+const DIRECTION_RIGHT = 'right';
+const DIRECTION_LEFT = 'left';
 
-export default class Player {
-  constructor(controller, spriteMap) {
+export default class Mario {
+  constructor(controller, animationMap) {
     this.controller = controller;
     this.gravity = new Vector(0, 3000);
-    this.spriteMap = spriteMap;
-    this.color = '#718096';
     this.size = new Size(14, 16);
     this.position = new Vector(100, 200);
     this.velocity = Vector.zero();
-    this.maxSpeed = UNIT * 10;
+    this.maxSpeed = 1000;
     this.jumping = false;
+    this.direction = DIRECTION_RIGHT;
 
-    // Animation data
-    this.tickCount = 0;
-    this.ticksPerFrame = 10;
-
-    this.initFrameSets();
+    this.animationSwitcher = new AnimationSwitcher(animationMap);
   }
 
   getBounds() {
     return new Bounds(this.position, this.size);
   }
 
-  update(delta) {
+  update(deltaTime) {
     // TODO: correct feature orders: [go -> jump -> velocity]
 
     if (this.controller.isPressed('left')) {
-      this.moveLeft(delta);
+      this.moveLeft(deltaTime);
     }
 
     if (this.controller.isPressed('right')) {
-      this.moveRight(delta);
+      this.moveRight(deltaTime);
     }
 
     if (this.controller.isPressed('up')) {
-      this.jump(delta);
+      this.jump(deltaTime);
     }
 
-    // this.velocity = this.velocity.plus(this.gravity.times(delta));
-    // this.position = this.position.plus(this.velocity.times(delta));
+    // this.velocity = this.velocity.plus(this.gravity.times(deltaTime));
+    // this.position = this.position.plus(this.velocity.times(deltaTime));
 
     // // TODO: round parameter on low values
     // // TODO: add Vector function to plus only x or y (e.g. plusX(15), plusY(20))
@@ -75,17 +71,19 @@ export default class Player {
     // }
   }
 
-  moveLeft(delta) {
+  moveLeft(deltaTime) {
     // TODO: check max speed with another vectors
     // this.velocity = this.velocity.plus(new Vector(-0.05, null));
-    this.velocity = new Vector(-this.maxSpeed * delta, this.velocity.y);
+    this.velocity = new Vector(-this.maxSpeed * deltaTime, this.velocity.y);
+    this.direction = DIRECTION_LEFT;
   }
 
-  moveRight(delta) {
+  moveRight(deltaTime) {
     // TODO: check max speed with another vectors
     // TODO: probably dont return a new vector instance and just change the current (and to save possibility just add clone() method to Vector)
     // this.velocity = this.velocity.plus(new Vector(0.05, null));
-    this.velocity = new Vector(this.maxSpeed * delta, this.velocity.y);
+    this.velocity = new Vector(this.maxSpeed * deltaTime, this.velocity.y);
+    this.direction = DIRECTION_RIGHT;
   }
 
   jump() {
@@ -101,82 +99,32 @@ export default class Player {
 
   render(view, camera) {
     this.renderEntity(view, camera);
-    this.renderController(view);
     this.renderDebug(view);
     this.renderHitBox(view, camera);
   }
 
-  /**
-   * Animations
-   */
-
-  initFrameSets() {
-    this.idleFrameSet = ['mario-idle'];
-    this.movingFrameSet = ['mario-run-1', 'mario-run-2', 'mario-run-3'];
-  }
-
-  setAnimationMode(mode) {
-    if (this.animationMode === mode) {
-      return;
-    }
-
-    console.log(`toggle animation mode to ${mode}`);
-
-    this.animationMode = mode;
-    this.tickCount = 0;
-    this.frameIndex = 0;
-  }
-
-  getAnimationFrame() {
-    console.log(this.frameIndex);
-    if (this.animationMode === 'moving') {
-      return this.movingFrameSet[this.frameIndex];
-    }
-
-    return this.idleFrameSet[this.frameIndex];
-  }
-
-  updateAnimationFrame() {
-    this.tickCount += 1;
-
-    if (this.tickCount > this.ticksPerFrame) {
-      this.nextAnimationFrame();
-      this.tickCount = 0;
-    }
-  }
-
-  nextAnimationFrame() {
-    if (this.animationMode === 'moving') {
-      this.frameIndex = (this.frameIndex + 1) % this.movingFrameSet.length;
-    }
-
-    if (this.animationMode === 'idle') {
-      this.frameIndex = 0;
-    }
-  }
-
-  animate() {
-    // Detect animation mode
+  animationFrame() {
     if (this.velocity.x === 0) {
-      this.setAnimationMode('idle');
+      if (this.direction === DIRECTION_RIGHT) {
+        this.animationSwitcher.switch('idleRight');
+      } else {
+        this.animationSwitcher.switch('idleLeft');
+      }
     }
 
     if (this.velocity.x > 0) {
-      this.setAnimationMode('moving');
+      this.animationSwitcher.switch('moveRight');
     }
 
-    // Get frame
-    const frame = this.getAnimationFrame();
+    if (this.velocity.x < 0) {
+      this.animationSwitcher.switch('moveLeft');
+    }
 
-    // Update animation frames
-    this.updateAnimationFrame();
-
-    // Return current frame
-    return this.spriteMap.get(frame);
+    return this.animationSwitcher.pull();
   }
 
   renderEntity(view, camera) {
-    view.image(this.animate(), this.position.minus(camera.position), this.size);
+    view.spriteImage(this.animationFrame(), this.position.minus(camera.position), this.size);
   }
 
   renderDebug(view) {
@@ -187,13 +135,6 @@ export default class Player {
   }
 
   renderHitBox(view, camera) {
-    view.outline(this.position.minus(camera.position), this.size, 'red');
-  }
-
-  renderController(view) {
-    view.text(`UP: ${this.controller.isPressed('up') ? 'PRESSED' : 'NO'}`, new Vector(10, 20));
-    view.text(`LEFT: ${this.controller.isPressed('left') ? 'PRESSED' : 'NO'}`, new Vector(10, 40));
-    view.text(`RIGHT: ${this.controller.isPressed('right') ? 'PRESSED' : 'NO'}`, new Vector(10, 60));
-    view.text(`DOWN: ${this.controller.isPressed('down') ? 'PRESSED' : 'NO'}`, new Vector(10, 80));
+    view.outline(this.position.minus(camera.position), this.size, 'blue');
   }
 }
