@@ -1,4 +1,3 @@
-/* eslint-disable import/extensions */
 export default class ImageLoader {
   static load(url) {
     return new Promise((resolve) => {
