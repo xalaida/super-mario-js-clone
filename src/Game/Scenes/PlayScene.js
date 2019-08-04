@@ -13,6 +13,10 @@ import Controller from '../../Engine/Input/Controller.js';
 import Mario from '../Entities/Mario.js';
 import TileCollider from '../../Engine/Tiles/TileCollider.js';
 import MouseController from '../../Engine/Input/MouseController.js';
+import Jump from '../Components/Jump.js';
+import Collisions from '../../Engine/Behaviour/Components/Collisions.js';
+import Falling from '../Components/Falling.js';
+import Turbo from '../Components/Turbo.js';
 
 export default class PlayScene extends Scene {
   constructor() {
@@ -22,7 +26,7 @@ export default class PlayScene extends Scene {
     this.controller = null;
     this.tileCollider = null;
     this.entities = [];
-    this.gravity = new Vector(0, 100);
+    this.gravity = new Vector(0, game.config.physics.gravity);
   }
 
   load() {
@@ -58,7 +62,7 @@ export default class PlayScene extends Scene {
 
         // animationManager.add('chance', new Animation([
         //   sprite.get('chance-1'),
-        //   sprite.get('chance-2'),
+        //   sprite.get('chance-1'),
         //   sprite.get('chance-2'),
         //   sprite.get('chance-3'),
         //   sprite.get('chance-2'),
@@ -96,14 +100,22 @@ export default class PlayScene extends Scene {
         spriteMap.define('mario-move-left-2', new Vector(193, 44), new Size(16, 16));
         spriteMap.define('mario-move-left-3', new Vector(177, 44), new Size(16, 16));
 
+        spriteMap.define('mario-break-right', new Vector(337, 44), new Size(16, 16));
+        spriteMap.define('mario-break-left', new Vector(160, 44), new Size(16, 16));
+
+        spriteMap.define('mario-jump-right', new Vector(355, 44), new Size(16, 16));
+        spriteMap.define('mario-jump-left', new Vector(142, 44), new Size(16, 16));
+
         const keyBinds = {
-          ArrowLeft: 'left',
-          ArrowUp: 'up',
-          ArrowRight: 'right',
-          ArrowDown: 'down',
+          'ArrowLeft': 'left',
+          'ArrowUp': 'up',
+          'ArrowRight': 'right',
+          'ArrowDown': 'down',
+          ' ': 'actionA',
         };
 
-        this.controller = new Controller(keyBinds);
+        this.controller = new Controller(keyBinds, game.config);
+        this.controller.enableDebug();
 
         const animationMap = new Map();
 
@@ -119,6 +131,14 @@ export default class PlayScene extends Scene {
           spriteMap.get('mario-move-left-3'),
         ]));
 
+        animationMap.set('breakLeft', new Animation([
+          spriteMap.get('mario-break-left'),
+        ]));
+
+        animationMap.set('breakRight', new Animation([
+          spriteMap.get('mario-break-right'),
+        ]));
+
         animationMap.set('idleLeft', new Animation([
           spriteMap.get('mario-idle-left'),
         ]));
@@ -127,9 +147,23 @@ export default class PlayScene extends Scene {
           spriteMap.get('mario-idle-right'),
         ]));
 
+        animationMap.set('jumpLeft', new Animation([
+          spriteMap.get('mario-jump-left'),
+        ]));
+
+        animationMap.set('jumpRight', new Animation([
+          spriteMap.get('mario-jump-right'),
+        ]));
+
+
         return new Mario(this.controller, animationMap);
       })
       .then((mario) => {
+        mario.addComponent(new Jump(mario));
+        mario.addComponent(new Falling(mario));
+        mario.addComponent(new Turbo(mario));
+        mario.addComponent(new Collisions(mario));
+
         const mouseController = new MouseController(game.view.context);
 
         // Camera simple mouse scroll
@@ -158,14 +192,19 @@ export default class PlayScene extends Scene {
       );
 
       entity.position.set(
-        entity.position.plusX(entity.velocity.x * deltaTime),
+        entity.position.plusX(entity.velocity.scale(deltaTime)),
       );
       this.tileCollider.checkX(entity);
 
       entity.position.set(
-        entity.position.plusY(entity.velocity.y * deltaTime),
+        entity.position.plusY(entity.velocity.scale(deltaTime)),
       );
       this.tileCollider.checkY(entity);
+
+      // Camera movement
+      if (Math.abs(entity.velocity.x) > 1 && entity.position.x > 100) {
+        this.camera.position.setX(entity.position.x - 100);
+      }
     });
   }
 
@@ -174,13 +213,19 @@ export default class PlayScene extends Scene {
 
     this.tileMap.render(view, this.camera);
 
-    this.tileCollider.render(view, this.camera);
-    this.tileCollider.reset();
+    if (game.config.debug.collisions) {
+      this.tileCollider.render(view, this.camera);
+      this.tileCollider.reset();
+    }
 
     this.entities.forEach(entity => entity.render(view, this.camera));
 
-    this.camera.render(view);
+    if (game.config.debug.camera) {
+      this.camera.render(view);
+    }
 
-    this.controller.render(view);
+    if (game.config.debug.controller) {
+      this.controller.render(view);
+    }
   }
 }
