@@ -9,6 +9,10 @@ export default class Controller {
     this.listenEvents();
   }
 
+  enableDebug() {
+    this.debug = true;
+  }
+
   static defaultControls() {
     return {
       ArrowLeft: 'left',
@@ -28,10 +32,9 @@ export default class Controller {
     });
   }
 
-  listenEvents() {
-    // TODO: maybe swap with context instead of window
-    window.addEventListener('keydown', this.handleKeyDownEvent.bind(this));
-    window.addEventListener('keyup', this.handleKeyUpEvent.bind(this));
+  listenEvents(context = null) {
+    (context || window).addEventListener('keydown', this.handleKeyDownEvent.bind(this));
+    (context || window).addEventListener('keyup', this.handleKeyUpEvent.bind(this));
   }
 
   handleKeyUpEvent(event) {
@@ -43,6 +46,10 @@ export default class Controller {
   }
 
   handleKeyEvent(event, state) {
+    if (this.debug) {
+      console.log(`Pressed the key: ${event.key}`);
+    }
+
     if (!this.keys.has(event.key)) {
       return;
     }
