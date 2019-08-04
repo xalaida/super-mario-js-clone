@@ -56,10 +56,6 @@ export default class Game {
    */
   update(deltaTime) {
     this.sceneManager.scene.update(deltaTime);
-
-    if (this.config.debug.fps) {
-      this.fps.update();
-    }
   }
 
   /**
