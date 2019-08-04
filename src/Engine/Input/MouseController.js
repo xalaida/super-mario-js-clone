@@ -37,10 +37,8 @@ export default class MouseController {
     // fire click events
     // TODO: refactor with one function for both buttons
     if (this.state.get(LEFT_BUTTON)) {
-      console.log('fire click events');
       this.onLeftClickListeners.forEach((listener) => {
         listener(this.currentPosition);
-        console.log('fire click listener');
       });
     }
     if (this.state.get(RIGHT_BUTTON)) {
