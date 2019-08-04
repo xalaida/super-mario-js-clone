@@ -2,21 +2,22 @@ import Vector from '../../Engine/Math/Vector.js';
 import Size from '../../Engine/Math/Size.js';
 import Bounds from '../../Engine/Math/Bounds.js';
 import AnimationSwitcher from '../../Engine/Graphic/Animations/AnimationSwitcher.js';
+import Entity from '../../Engine/Behaviour/Entity.js';
 
 const DIRECTION_RIGHT = 'right';
 const DIRECTION_LEFT = 'left';
 
-export default class Mario {
+export default class Mario extends Entity {
   constructor(controller, animationMap) {
+    super();
     this.controller = controller;
-    this.gravity = new Vector(0, 3000);
     this.size = new Size(14, 16);
     this.position = new Vector(100, 200);
     this.velocity = Vector.zero();
-    this.maxSpeed = 1000;
-    this.jumping = false;
+    this.deceleration = new Vector(100, 0);
+    this.accelaration = new Vector(100, 0);
+    this.maxSpeed = 100;
     this.direction = DIRECTION_RIGHT;
-
     this.animationSwitcher = new AnimationSwitcher(animationMap);
   }
 
@@ -25,102 +26,84 @@ export default class Mario {
   }
 
   update(deltaTime) {
-    // TODO: correct feature orders: [go -> jump -> velocity]
+    super.update(deltaTime);
 
     if (this.controller.isPressed('left')) {
       this.moveLeft(deltaTime);
-    }
-
-    if (this.controller.isPressed('right')) {
+    } else if (this.controller.isPressed('right')) {
       this.moveRight(deltaTime);
+    } else {
+      this.decelerate(deltaTime);
     }
-
-    if (this.controller.isPressed('up')) {
-      this.jump(deltaTime);
-    }
-
-    // this.velocity = this.velocity.plus(this.gravity.times(deltaTime));
-    // this.position = this.position.plus(this.velocity.times(deltaTime));
-
-    // // TODO: round parameter on low values
-    // // TODO: add Vector function to plus only x or y (e.g. plusX(15), plusY(20))
-    // this.velocity = this.velocity.plus(new Vector(null, this.gravity));
-
-    // this.velocity = this.velocity.multiply(new Vector(0.9, null)); // TODO: probably add friction also to Y
-
-    // TODO: create World class and add to it collide(player) method which Game class will handle inside update loop
-    // TODO: also add isCollidable prop to check if it is not Fps, Background or any other not
-    //  colidable entity (in the future will be fixed with grid and availability of location vector)
-
-    // if (this.position.y >= FLOOR) {
-    //   this.velocity = this.velocity.multiply(new Vector(null, 0));
-    //   this.position = new Vector(this.position.x, FLOOR);
-    //   this.jumping = false;
-    // }
-
-    // //
-    // // if (this.position.x <= 0) {
-    // //   this.velocity = this.velocity.multiply(new Vector(0, null));
-    // //   this.position = new Vector(0, this.position.y);
-    // // }
-    // //
-
-    // if (this.position.x >= 500) {
-    //   this.velocity = this.velocity.multiply(new Vector(0, null));
-    //   this.position = new Vector(500, this.position.y);
-    // }
   }
 
   moveLeft(deltaTime) {
-    // TODO: check max speed with another vectors
-    // this.velocity = this.velocity.plus(new Vector(-0.05, null));
-    this.velocity = new Vector(-this.maxSpeed * deltaTime, this.velocity.y);
+    this.velocity.set(this.velocity.minusX(this.accelaration.scale(deltaTime)));
+
+    if (Math.abs(this.velocity.x) > this.maxSpeed) {
+      this.velocity.setX(-this.maxSpeed);
+    }
+
     this.direction = DIRECTION_LEFT;
   }
 
   moveRight(deltaTime) {
-    // TODO: check max speed with another vectors
-    // TODO: probably dont return a new vector instance and just change the current (and to save possibility just add clone() method to Vector)
-    // this.velocity = this.velocity.plus(new Vector(0.05, null));
-    this.velocity = new Vector(this.maxSpeed * deltaTime, this.velocity.y);
+    this.velocity.set(this.velocity.plusX(this.accelaration.scale(deltaTime)));
+
+    if (Math.abs(this.velocity.x) > this.maxSpeed) {
+      this.velocity.setX(this.maxSpeed);
+    }
+
     this.direction = DIRECTION_RIGHT;
   }
 
-  jump() {
-    if (this.jumping) {
-      return;
-    }
-
-    console.log('jumping');
-
-    this.jumping = true;
-    this.velocity = this.velocity.plus(new Vector(null, -400));
+  decelerate(deltaTime) {
+    const deceleration = Math.min(Math.abs(this.velocity.x), this.deceleration.x * deltaTime);
+    this.velocity.x += this.velocity.x > 0 ? -deceleration : deceleration;
   }
 
   render(view, camera) {
     this.renderEntity(view, camera);
     this.renderDebug(view);
     this.renderHitBox(view, camera);
+    this.renderJumpDebug(view);
   }
 
   animationFrame() {
-    if (this.velocity.x === 0) {
-      if (this.direction === DIRECTION_RIGHT) {
-        this.animationSwitcher.switch('idleRight');
-      } else {
-        this.animationSwitcher.switch('idleLeft');
+    this.determineAnimationMode();
+    return this.animationSwitcher.pull();
+  }
+
+  determineAnimationMode() {
+    if (!this.component('jump').ready) {
+      if (this.direction === DIRECTION_LEFT) {
+        return this.animationSwitcher.switch('jumpLeft');
       }
+
+      return this.animationSwitcher.switch('jumpRight');
     }
 
     if (this.velocity.x > 0) {
-      this.animationSwitcher.switch('moveRight');
+      if (this.direction === DIRECTION_LEFT) {
+        return this.animationSwitcher.switch('breakLeft');
+      }
+
+      return this.animationSwitcher.switch('moveRight');
     }
 
     if (this.velocity.x < 0) {
-      this.animationSwitcher.switch('moveLeft');
+      if (this.direction === DIRECTION_RIGHT) {
+        return this.animationSwitcher.switch('breakRight');
+      }
+
+      return this.animationSwitcher.switch('moveLeft');
     }
 
-    return this.animationSwitcher.pull();
+    if (this.direction === DIRECTION_RIGHT) {
+      return this.animationSwitcher.switch('idleRight');
+    }
+
+    return this.animationSwitcher.switch('idleLeft');
   }
 
   renderEntity(view, camera) {
@@ -128,13 +111,24 @@ export default class Mario {
   }
 
   renderDebug(view) {
-    view.text(`Velocity X: ${this.velocity.x}`, new Vector(200, 20));
-    view.text(`Velocity Y: ${this.velocity.y}`, new Vector(200, 40));
-    view.text(`Position X: ${this.position.x}`, new Vector(200, 60));
-    view.text(`Position Y: ${this.position.y}`, new Vector(200, 80));
+    if (game.config.debug.coordinates) {
+      view.text(`Velocity X: ${this.velocity.x}`, new Vector(200, 20));
+      view.text(`Velocity Y: ${this.velocity.y}`, new Vector(200, 40));
+      view.text(`Position X: ${this.position.x}`, new Vector(200, 60));
+      view.text(`Position Y: ${this.position.y}`, new Vector(200, 80));
+    }
   }
 
   renderHitBox(view, camera) {
-    view.outline(this.position.minus(camera.position), this.size, 'blue');
+    if (game.config.debug.hitbox) {
+      view.outline(this.position.minus(camera.position), this.size, 'blue');
+    }
+  }
+
+  renderJumpDebug(view) {
+    view.text(`Jump ready: ${this.component('jump').ready}`, new Vector(200, 100));
+    view.text(`Jump left time: ${this.component('jump').leftTime}`, new Vector(200, 120));
+    view.text(`Jump request time: ${this.component('jump').requestTime}`, new Vector(200, 140));
+    view.text(`Jump grace time: ${this.component('jump').graceTime}`, new Vector(200, 160));
   }
 }
