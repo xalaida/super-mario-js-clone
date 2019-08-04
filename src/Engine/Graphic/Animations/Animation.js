@@ -1,5 +1,5 @@
 export default class Animation {
-  constructor(frameSet, ticksPerFrame = 10) {
+  constructor(frameSet, ticksPerFrame = 8) {
     this.frameSet = frameSet;
     this.ticksPerFrame = ticksPerFrame;
     this.frameIndex = 0;
