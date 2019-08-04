@@ -1,5 +1,3 @@
-import Vector from './Vector.js';
-
 export default class Bounds {
   constructor(position, size) {
     this.position = position;
@@ -27,6 +25,6 @@ export default class Bounds {
   }
 
   get end() {
-    return this.position.plus(new Vector(this.size.width, this.size.height));
+    return this.position.plus(this.size.toVector());
   }
 }

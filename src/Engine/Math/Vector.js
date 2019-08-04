@@ -8,18 +8,6 @@ export default class Vector {
     return new Vector(0, 0);
   }
 
-  floor() {
-    this.x = Math.floor(this.x);
-    this.y = Math.floor(this.y);
-    return this;
-  }
-
-  ceil() {
-    this.x = Math.ceil(this.x);
-    this.y = Math.ceil(this.y);
-    return this;
-  }
-
   set(vector) {
     this.x = vector.x;
     this.y = vector.y;
@@ -36,65 +24,87 @@ export default class Vector {
     return this;
   }
 
-  /**
-   *
-   * Below comes only with immutable methods
-   *
-   */
-
   plus(vector) {
     return new Vector(
-      vector.x === null ? this.x : this.x + vector.x,
-      vector.y === null ? this.y : this.y + vector.y,
+      vector.x === null || this.x === null ? this.x : this.x + vector.x,
+      vector.y === null || this.y === null ? this.y : this.y + vector.y,
     );
   }
 
-  plusX(x) {
+  plusX(vector) {
     return new Vector(
-      this.x + x,
+      this.x + vector.x,
       this.y,
     );
   }
 
-  plusY(y) {
+  plusY(vector) {
     return new Vector(
       this.x,
-      this.y + y,
+      this.y + vector.y,
     );
   }
 
   minus(vector) {
     return new Vector(
-      vector.x === null ? this.x : this.x - vector.x,
-      vector.y === null ? this.y : this.y - vector.y,
+      vector.x === null || this.x === null ? this.x : this.x - vector.x,
+      vector.y === null || this.y === null ? this.y : this.y - vector.y,
     );
   }
 
-  minusX(x) {
+  minusX(vector) {
     return new Vector(
-      this.x - x,
+      this.x - vector.x,
       this.y,
     );
   }
 
-  minusY(y) {
+  minusY(vector) {
     return new Vector(
       this.x,
-      this.y - y,
+      this.y - vector.y,
     );
   }
 
   multiply(vector) {
     return new Vector(
-      vector.x === null ? this.x : this.x * vector.x,
-      vector.y === null ? this.y : this.y * vector.y,
+      vector.x === null || this.x === null ? this.x : this.x * vector.x,
+      vector.y === null || this.y === null ? this.y : this.y * vector.y,
+    );
+  }
+
+  divide(vector) {
+    return new Vector(
+      vector.x === null || this.x === null ? this.x : this.x / vector.x,
+      vector.y === null || this.y === null ? this.y : this.y / vector.y,
     );
   }
 
   scale(times) {
     return new Vector(
-      this.x * times,
-      this.y * times,
+      this.x === null ? this.x : this.x * times,
+      this.y === null ? this.y : this.y * times,
+    );
+  }
+
+  floor() {
+    return new Vector(
+      Math.floor(this.x),
+      Math.floor(this.y),
+    );
+  }
+
+  ceil() {
+    return new Vector(
+      Math.ceil(this.x),
+      Math.ceil(this.y),
+    );
+  }
+
+  abs() {
+    return new Vector(
+      Math.abs(this.x),
+      Math.abs(this.y),
     );
   }
 }
