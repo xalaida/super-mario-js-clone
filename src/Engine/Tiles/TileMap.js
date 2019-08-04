@@ -32,15 +32,8 @@ export default class TileMap {
    * @returns {Array}
    */
   findInBounds(bounds) {
-    // TODO: try to use always CEIL for current game model
-
-    // TODO: use toIndices()
-    const x1 = Math.floor(bounds.left / this.tileSize.width);
-    const y1 = Math.floor(bounds.top / this.tileSize.height);
-
-    // TODO: add method for toIndices but with ceiling
-    const x2 = Math.ceil(bounds.right / this.tileSize.width);
-    const y2 = Math.ceil(bounds.bottom / this.tileSize.height);
+    const { x: x1, y: y1 } = bounds.start.divide(this.tileSize.toVector()).floor();
+    const { x: x2, y: y2 } = bounds.end.divide(this.tileSize.toVector()).ceil();
 
     const tiles = [];
 
@@ -57,21 +50,13 @@ export default class TileMap {
     return tiles;
   }
 
-  // TODO: check usage
-  forEach(callback) {
-    this.tiles.forEach(callback);
-  }
-
   render(view, camera) {
-    // TODO: add buffer supports
-    // TODO: if camera position does not change, do not rerender buffer and background at all
-
-    this.findInBounds(camera.bounds)
+    this.findInBounds(camera.getBounds())
       .forEach((tile) => {
         tile.render(view, camera);
 
         if (this.config.debug.tiles) {
-          view.outline(tile.position, tile.size, '#5993ab61');
+          view.outline(tile.position.minus(camera.position), tile.size, '#5993ab61');
         }
       });
   }
@@ -84,9 +69,7 @@ export default class TileMap {
   }
 
   toIndices(position) {
-    return [
-      Math.ceil(position.x / this.tileSize.width),
-      Math.ceil(position.y / this.tileSize.height),
-    ];
+    const { x, y } = position.divide(this.tileSize.toVector()).floor();
+    return [x, y];
   }
 }
