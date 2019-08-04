@@ -19,6 +19,6 @@ export default class Fps {
   }
 
   render(view) {
-    view.text(`FPS: ${this.value}`, new Vector(this.config.width - 50, 20));
+    view.text(`FPS: ${this.value}`, new Vector(this.config.width - 120, 20));
   }
 }
