@@ -5,7 +5,10 @@ export default class Camera {
   constructor(position, size) {
     this.position = position;
     this.size = size;
-    this.bounds = new Bounds(this.position, this.size);
+  }
+
+  getBounds() {
+    return new Bounds(this.position, this.size);
   }
 
   render(view) {
