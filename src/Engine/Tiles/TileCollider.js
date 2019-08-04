@@ -1,7 +1,6 @@
 export default class TileCollider {
   constructor(tileMap) {
     this.tileMap = tileMap;
-
     this.checkableTile = [];
     this.colladableTiles = [];
   }
@@ -72,6 +71,7 @@ export default class TileCollider {
     if (entity.getBounds().top < tile.getBounds().bottom) {
       entity.position.setY(tile.getBounds().bottom);
       entity.velocity.setY(0);
+      entity.component('collisions').collideTop();
       this.colladableTiles.push(tile);
     }
   }
@@ -80,6 +80,7 @@ export default class TileCollider {
     if (entity.getBounds().bottom > tile.getBounds().top) {
       entity.position.setY(tile.position.y - entity.size.height);
       entity.velocity.setY(0);
+      entity.component('collisions').collideBottom();
       this.colladableTiles.push(tile);
     }
   }
