@@ -8,7 +8,6 @@ import PlayScene from './src/Game/Scenes/PlayScene.js';
 window.addEventListener('load', () => {
   const view = new View(CanvasFactory.createContext(config.width, config.height, document.body));
   window.game = new Game(config, view);
-
   game.addScene('demo', new DemoScene());
   game.addScene('play', new PlayScene());
   game.start('play');
