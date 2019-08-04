@@ -1,5 +1,4 @@
 import Component from '../../Engine/Entities/Component.js';
-import Vector from '../../Engine/Math/Vector.js';
 
 /**
  * Jump supports the next things:
@@ -7,61 +6,170 @@ import Vector from '../../Engine/Math/Vector.js';
  * - Disable double jump in the air
  * - Disable infinity jump when key is pressed
  * - Disable jumping when entity just starts falling and tries to return back with jump
+ * - Jump when the entity is falling last seconds (not when the entity already stay on the ground)
  */
 export default class Jump extends Component {
   constructor(entity) {
     super('jump', entity);
-    this.duration = 0.1;
-    this.power = new Vector(0, -1000);
+    /**
+     * Allow to jump higher when jump button is held
+     */
+    this.duration = 0.3;
+
+    /**
+     * Set up jump power (vector which will be applied to the entity velocity)
+     */
+    this.power = game.config.components.jump.power;
+
+    /**
+     * An interval which allows to press jump before the entity grounds
+     */
+    this.graceTime = game.config.components.jump.graceTime;
+
+    /**
+     * Speed boost factor which allows to jump the higher when a horizontal speed the bigger
+     */
+    this.speedBoost = game.config.components.jump.speedBoost;
+
+    /**
+     * Time that defines how long jump button can be pressed else
+     */
+    this.leftTime = 0;
+
+    /**
+     * A timer for the graceTime calculation with the delta time
+     */
+    this.requestTime = 0;
+
+    /**
+     * A flag that determines if the jump is allowed right now
+     */
     this.ready = true;
-    this.falling = false;
+
+    /**
+     * A flag that determines if the jump can be requested right now
+     */
+    this.canRequest = true;
   }
 
+  /**
+   * Update jump component
+   *
+   * @param deltaTime
+   */
   update(deltaTime) {
-    if (this.entity.controller.isPressed('up')) {
-      this.handleJump();
-    } else {
-      this.cancel();
-      this.charge();
-    }
-
+    this.handleInput();
     this.checkCollisions();
     this.perform(deltaTime);
   }
 
-  handleJump() {
-    if (this.ready && !this.entity.component('falling').state) {
-      this.start();
-    }
-  }
-
-  start() {
-    this.ready = false;
-    this.leftTime = this.duration;
-  }
-
-  cancel() {
-    this.leftTime = 0;
-  }
-
-  charge() {
-    if (!this.ready) {
-      if (this.entity.component('collisions').isCollideBottom()) {
-        this.ready = true;
-      }
-    }
-  }
-
-  checkCollisions() {
-    if (this.entity.component('collisions').isCollideTop()) {
+  /**
+   * Handle input for jumping control
+   */
+  handleInput() {
+    if (this.entity.controller.isPressed('up')) {
+      this.request();
+    } else {
       this.cancel();
     }
   }
 
+  /**
+   * Request to jump when it will be possible
+   */
+  request() {
+    if (this.canRequest) {
+      this.requestTime = this.graceTime;
+      this.canRequest = false;
+    }
+  }
+
+  /**
+   * Cancel the jump process
+   */
+  cancel() {
+    this.stop();
+    this.reset();
+  }
+
+  /**
+   * Start jump process
+   */
+  start() {
+    this.leftTime = this.duration;
+    this.ready = false;
+    this.requestTime = 0;
+  }
+
+  /**
+   * Stop jump process
+   */
+  stop() {
+    this.leftTime = 0;
+    this.requestTime = 0;
+  }
+
+  /**
+   * Reset jump status
+   */
+  reset() {
+    this.canRequest = true;
+  }
+
+  /**
+   * Charge the next jump
+   */
+  charge() {
+    this.ready = true;
+  }
+
+  /**
+   * Check entity collisions
+   */
+  checkCollisions() {
+    if (this.entity.component('collisions').isCollideBottom()) {
+      this.charge();
+    }
+
+    if (this.entity.component('collisions').isCollideTop()) {
+      this.stop();
+    }
+  }
+
+  /**
+   * Perform entity jumping
+   *
+   * @param deltaTime
+   */
   perform(deltaTime) {
+    this.attempt(deltaTime);
+    this.apply(deltaTime);
+  }
+
+  /**
+   * Attempt to jump if it possible
+   *
+   * @param deltaTime
+   */
+  attempt(deltaTime) {
+    if (this.requestTime > 0) {
+      if (this.ready && !this.entity.component('falling').state) {
+        this.start();
+      }
+
+      this.requestTime -= deltaTime;
+    }
+  }
+
+  /**
+   * Apply jump attributes to entity
+   *
+   * @param deltaTime
+   */
+  apply(deltaTime) {
     if (this.leftTime > 0) {
-      this.entity.velocity.set(
-        this.entity.velocity.plus(this.power.scale(deltaTime)),
+      this.entity.velocity.setY(
+        -(this.power + this.entity.velocity.scale(this.speedBoost).x),
       );
 
       this.leftTime -= deltaTime;
