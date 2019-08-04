@@ -1,6 +1,7 @@
 import Loop from './Loop/Loop.js';
 import SceneManager from './Scenes/SceneManager.js';
 import Fps from './Debug/Fps.js';
+import Memory from './Debug/Memory.js';
 
 export default class Game {
   /**
@@ -14,6 +15,7 @@ export default class Game {
     this.view = view;
     this.sceneManager = new SceneManager();
     this.fps = new Fps(config);
+    this.memory = new Memory(config);
   }
 
   /**
@@ -70,6 +72,10 @@ export default class Game {
 
     if (this.config.debug.fps) {
       this.fps.render(this.view);
+    }
+
+    if (this.config.debug.memory) {
+      this.memory.render(this.view);
     }
   }
 }
