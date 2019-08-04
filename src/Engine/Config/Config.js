@@ -8,6 +8,7 @@ export default class Config {
 
     this.debug = {
       fps: false,
+      memory: false,
       tiles: false,
     };
 
