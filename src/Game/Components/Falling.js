@@ -1,4 +1,4 @@
-import Component from '../../Engine/Entities/Component.js';
+import Component from '../../Engine/Behaviour/Component.js';
 
 export default class Falling extends Component {
   constructor(entity) {

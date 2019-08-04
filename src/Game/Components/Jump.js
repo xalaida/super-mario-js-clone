@@ -1,4 +1,4 @@
-import Component from '../../Engine/Entities/Component.js';
+import Component from '../../Engine/Behaviour/Component.js';
 
 /**
  * Jump supports the next things:
