@@ -10,9 +10,32 @@ const config = new Config({
       height: 16,
     },
   },
+  physics: {
+    gravity: 600,
+  },
+  player: {
+    maxSpeed: 80,
+    acceleration: 80,
+    turboMaxSpeed: 120,
+    turboAcceleration: 120,
+  },
+  components: {
+    jump: {
+      power: 150,
+      graceTime: 0.4,
+      speedBoost: 0.3,
+    },
+  },
+  debug: {
+    fps: true,
+    memory: true,
+    tiles: true,
+    collisions: true,
+    camera: true,
+    hitbox: true,
+    coordinates: true,
+    controller: true,
+  },
 });
-
-config.debug.fps = true;
-config.debug.tiles = true;
 
 export default config;
