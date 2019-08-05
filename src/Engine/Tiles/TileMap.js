@@ -9,6 +9,10 @@ export default class TileMap {
     this.tiles = new Grid();
   }
 
+  setBackgroundColor(color) {
+    this.backgroundColor = color;
+  }
+
   add(xIndex, yIndex, image, options = {}) {
     const tile = new Tile(this.toPosition(xIndex, yIndex), this.tileSize, image, options);
     this.tiles.set(xIndex, yIndex, tile);
@@ -51,6 +55,8 @@ export default class TileMap {
   }
 
   render(view, camera) {
+    this.renderBackground(view, camera);
+
     this.findInBounds(camera.getBounds())
       .forEach((tile) => {
         tile.render(view, camera);
@@ -59,6 +65,12 @@ export default class TileMap {
           view.outline(tile.position.minus(camera.position), tile.size, '#5993ab61');
         }
       });
+  }
+
+  renderBackground(view, camera) {
+    if (this.backgroundColor) {
+      view.rectangle(Vector.zero(), camera.size, this.backgroundColor);
+    }
   }
 
   toPosition(x, y) {

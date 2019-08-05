@@ -52,11 +52,26 @@ export default class PlayScene extends Scene {
         sprite.define('chance-2', new Vector(400, 0), new Size(16, 16));
         sprite.define('chance-3', new Vector(416, 0), new Size(16, 16));
 
+        // Sprite groups
+        sprite.define('pipe-vertical-top-left', new Vector(0, 128), new Size(16, 16));
+        sprite.define('pipe-vertical-top-right', new Vector(16, 128), new Size(16, 16));
+        sprite.define('pipe-vertical-left', new Vector(0, 144), new Size(16, 16));
+        sprite.define('pipe-vertical-right', new Vector(16, 144), new Size(16, 16));
+
+        sprite.define('cloud-1-1', new Vector(0, 320), new Size(16, 16));
+        sprite.define('cloud-1-2', new Vector(16, 320), new Size(16, 16));
+        sprite.define('cloud-1-3', new Vector(32, 320), new Size(16, 16));
+        sprite.define('cloud-2-1', new Vector(0, 336), new Size(16, 16));
+        sprite.define('cloud-2-2', new Vector(16, 336), new Size(16, 16));
+        sprite.define('cloud-2-3', new Vector(32, 336), new Size(16, 16));
+
         return sprite;
       })
       .then((sprite) => {
         const tileSize = new Size(game.config.tiles.size.width, game.config.tiles.size.height);
         this.tileMap = new TileMap(game.config, tileSize);
+
+        this.tileMap.setBackgroundColor('#64abfa');
 
         // const animationManager = new AnimationManager();
 
@@ -69,10 +84,25 @@ export default class PlayScene extends Scene {
         // ], 8));
 
         const mapping = {
+          // Blocks
           '.': { image: 'sky' },
           '#': { image: 'ground', options: { ground: true } },
           '%': { image: 'bricks', options: { ground: true } },
           'O': { image: 'chance', options: { ground: true } },
+
+          // Vertical Pipe
+          '╗': { image: 'pipe-vertical-top-left', options: { ground: true } },
+          '╔': { image: 'pipe-vertical-top-right', options: { ground: true } },
+          '⎜': { image: 'pipe-vertical-left', options: { ground: true } },
+          '⎥': { image: 'pipe-vertical-right', options: { ground: true } },
+
+          // Structures
+          '╭': { image: 'cloud-1-1', options: { ground: false } },
+          '╌': { image: 'cloud-1-2', options: { ground: false } },
+          '╮': { image: 'cloud-1-3', options: { ground: false } },
+          '╰': { image: 'cloud-2-1', options: { ground: false } },
+          '━': { image: 'cloud-2-2', options: { ground: false } },
+          '╯': { image: 'cloud-2-3', options: { ground: false } },
         };
 
         return TileMapLoader.fromTxt('/resources/levels/1-1.lvl', this.tileMap, mapping, sprite);
