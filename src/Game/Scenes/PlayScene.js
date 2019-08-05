@@ -37,6 +37,7 @@ export default class PlayScene extends Scene {
   }
 
   loadTiles() {
+    // TODO: refactor loading level with JSON specification
     return ImageLoader.load('/resources/sprites/world-sprite.png')
       .then((image) => {
         const sprite = new SpriteMap(image);
@@ -104,6 +105,9 @@ export default class PlayScene extends Scene {
           '━': { image: 'cloud-2-2', options: { ground: false } },
           '╯': { image: 'cloud-2-3', options: { ground: false } },
         };
+
+        // TODO: refactor clouds and sky with BackgroundLayer which should use a separate TileMap
+        // TODO: add different TileMap generation to allow use Animations as image
 
         return TileMapLoader.fromTxt('/resources/levels/1-1.lvl', this.tileMap, mapping, sprite);
       })
