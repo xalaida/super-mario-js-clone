@@ -4,7 +4,7 @@ export default class SpriteTile extends Tile {
   /**
    * SpriteTile constructor
    *
-   * @param image
+   * @param {SpriteImage} image
    * @param options
    */
   constructor(image, options = {}) {
@@ -16,8 +16,8 @@ export default class SpriteTile extends Tile {
   /**
    * Render the sprite tile
    *
-   * @param view
-   * @param camera
+   * @param {View} view
+   * @param {Camera} camera
    */
   render(view, camera) {
     view.spriteImage(this.image, this.position.minus(camera.position), this.size);
