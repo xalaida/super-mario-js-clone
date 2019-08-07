@@ -8,7 +8,7 @@ export default class Game {
    * Create game with all dependencies
    *
    * @param config
-   * @param view
+   * @param {View} view
    */
   constructor(config, view) {
     this.config = config;
@@ -19,19 +19,19 @@ export default class Game {
   }
 
   /**
-   * Add scene to game
+   * Add a scene to the game
    *
-   * @param name
-   * @param scene
+   * @param {String} name
+   * @param {Scene} scene
    */
   addScene(name, scene) {
     this.sceneManager.add(name, scene);
   }
 
   /**
-   * Start game scene
+   * Start the game scene
    *
-   * @param sceneName
+   * @param {String} sceneName
    */
   start(sceneName) {
     this.sceneManager.setCurrent(sceneName);
@@ -42,7 +42,7 @@ export default class Game {
   }
 
   /**
-   * Start game loop
+   * Start the game loop
    */
   startLoop() {
     const loop = new Loop(this, this.config.fps);
@@ -52,7 +52,7 @@ export default class Game {
   /**
    * Update the game state
    *
-   * @param deltaTime
+   * @param {Number} deltaTime
    */
   update(deltaTime) {
     this.sceneManager.scene.update(deltaTime);
@@ -61,7 +61,7 @@ export default class Game {
   /**
    * Render the game state
    *
-   * @param interpolation
+   * @param {Number} interpolation
    */
   render(interpolation) {
     this.sceneManager.scene.render(this.view, interpolation);
