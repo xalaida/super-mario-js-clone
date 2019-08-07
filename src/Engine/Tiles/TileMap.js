@@ -1,38 +1,70 @@
 import Grid from '../Math/Grid.js';
 import Vector from '../Math/Vector.js';
-import Tile from './Tile.js';
 
 export default class TileMap {
+  /**
+   * TileMap constructor
+   *
+   * @param config
+   * @param {Size} tileSize
+   */
   constructor(config, tileSize) {
     this.config = config;
     this.tileSize = tileSize;
     this.tiles = new Grid();
   }
 
-  setBackgroundColor(color) {
-    this.backgroundColor = color;
+  /**
+   * Get the tile size of the tile map
+   *
+   * @returns {Size}
+   */
+  getTileSize() {
+    return this.tileSize;
   }
 
-  add(xIndex, yIndex, image, options = {}) {
-    const tile = new Tile(this.toPosition(xIndex, yIndex), this.tileSize, image, options);
+  /**
+   * Add a new tile to the tilemap
+   *
+   * @param {Number} xIndex
+   * @param {Number} yIndex
+   * @param {Tile} tile
+   */
+  add(xIndex, yIndex, tile) {
+    tile.setPosition(this.toPosition(xIndex, yIndex));
+    tile.setSize(this.getTileSize());
     this.tiles.set(xIndex, yIndex, tile);
   }
 
+  /**
+   * Get a tile by coordinates
+   *
+   * @param {Number} xIndex
+   * @param {Number} yIndex
+   * @returns {Tile|undefined}
+   */
   get(xIndex, yIndex) {
-    // TODO: fix if matrix has undefined coordinates
     return this.tiles.get(xIndex, yIndex);
   }
 
+  /**
+   * Find a tile by the position
+   *
+   * @param {Vector} position
+   * @returns {Tile|undefined}
+   */
   findByPosition(position) {
     const [x, y] = this.toIndices(position);
     return this.get(x, y);
   }
 
   /**
+   * Find tiles in the bounds area
+   *
    * NOTICE! Method includes left and top side of the current tile
    * and does not include right and bottom side of the next tile
    *
-   * @param bounds
+   * @param {Bounds} bounds
    * @returns {Array}
    */
   findInBounds(bounds) {
@@ -54,9 +86,13 @@ export default class TileMap {
     return tiles;
   }
 
+  /**
+   * Render the tilemap
+   *
+   * @param {View} view
+   * @param {Camera} camera
+   */
   render(view, camera) {
-    this.renderBackground(view, camera);
-
     this.findInBounds(camera.getBounds())
       .forEach((tile) => {
         tile.render(view, camera);
@@ -67,19 +103,26 @@ export default class TileMap {
       });
   }
 
-  renderBackground(view, camera) {
-    if (this.backgroundColor) {
-      view.rectangle(Vector.zero(), camera.size, this.backgroundColor);
-    }
-  }
-
-  toPosition(x, y) {
+  /**
+   * Transform indices to the tilemap position
+   *
+   * @param {Number} xIndex
+   * @param {Number} yIndex
+   * @returns {Vector}
+   */
+  toPosition(xIndex, yIndex) {
     return new Vector(
-      x * this.tileSize.width,
-      y * this.tileSize.height,
+      xIndex * this.tileSize.width,
+      yIndex * this.tileSize.height,
     );
   }
 
+  /**
+   * Transform the position to the tilemap indices
+   *
+   * @param {Vector} position
+   * @returns {Array}
+   */
   toIndices(position) {
     const { x, y } = position.divide(this.tileSize.toVector()).floor();
     return [x, y];
