@@ -1,7 +1,14 @@
 import FileLoader from '../../Engine/Loaders/FileLoader.js';
+import SpriteTile from '../../Engine/Tiles/SpriteTile.js';
+import AnimatedTile from '../../Engine/Tiles/AnimatedTile.js';
 
 export default class TileMapLoader {
-  static fromTxt(url, tileMap, mapping, sprite) {
+  constructor(spriteMap, animationManager = null) {
+    this.spriteMap = spriteMap;
+    this.animationManager = animationManager;
+  }
+
+  fromLvl(url, tileMap, mapping) {
     return FileLoader.load(url)
       .then((content) => {
         const lines = content.split(/[\n]+/g);
@@ -13,10 +20,18 @@ export default class TileMapLoader {
             const char = line[x];
 
             if (mapping[char]) {
-              tileMap.add(x, y, sprite.get(mapping[char].image), mapping[char].options);
+              tileMap.add(x, y, this.createTile(mapping[char]));
             }
           }
         }
       });
+  }
+
+  createTile(mapping) {
+    if (mapping.type === 'animation') {
+      return new AnimatedTile(this.animationManager.get(mapping.sprite), mapping.options);
+    }
+
+    return new SpriteTile(this.spriteMap.get(mapping.sprite), mapping.options);
   }
 }
