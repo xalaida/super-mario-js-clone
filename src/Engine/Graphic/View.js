@@ -1,6 +1,8 @@
 export default class View {
   /**
    * Create a view for game rendering control
+   * TODO: remove all floor methods from vector
+   * TODO: pass from outside prepared vector with .floor() method
    *
    * @param context
    */
@@ -18,9 +20,9 @@ export default class View {
   /**
    * Draw a rectangle
    *
-   * @param position
-   * @param size
-   * @param color
+   * @param {Vector} position
+   * @param {Size} size
+   * @param {String} color
    */
   rectangle(position, size, color = 'blue') {
     this.context.save();
@@ -32,16 +34,16 @@ export default class View {
   /**
    * Draw a text
    *
-   * @param text
-   * @param vector
-   * @param color
-   * @param size
+   * @param {String} text
+   * @param {Vector} position
+   * @param {String} color
+   * @param {String} fontSize
    */
-  text(text, vector, color = 'black', size = '14px') {
+  text(text, position, color = 'black', fontSize = '14px') {
     this.context.save();
-    this.context.font = size;
+    this.context.font = fontSize;
     this.context.fillStyle = color;
-    this.context.fillText(text, vector.x, vector.y);
+    this.context.fillText(text, position.x, position.y);
     this.context.restore();
   }
 
@@ -62,11 +64,11 @@ export default class View {
   }
 
   /**
-   * Render image at the position with the given size
+   * Render an image at the position with the given size
    *
-   * @param image
-   * @param position
-   * @param size
+   * @param {SpriteImage} image
+   * @param {Vector} position
+   * @param {Size} size
    */
   spriteImage(image, position, size) {
     this.context.drawImage(
