@@ -17,6 +17,7 @@ import Jump from '../Components/Jump.js';
 import Collisions from '../../Engine/Behaviour/Components/Collisions.js';
 import Falling from '../Components/Falling.js';
 import Turbo from '../Components/Turbo.js';
+import AnimationManager from '../../Engine/Graphic/Animations/AnimationManager.js';
 
 export default class PlayScene extends Scene {
   constructor() {
@@ -27,6 +28,9 @@ export default class PlayScene extends Scene {
     this.tileCollider = null;
     this.entities = [];
     this.gravity = new Vector(0, game.config.physics.gravity);
+    this.animationManager = null;
+    // TODO: extract render logic into beautiful renderable Layers
+    this.layers = [];
   }
 
   load() {
@@ -72,44 +76,43 @@ export default class PlayScene extends Scene {
         const tileSize = new Size(game.config.tiles.size.width, game.config.tiles.size.height);
         this.tileMap = new TileMap(game.config, tileSize);
 
-        this.tileMap.setBackgroundColor('#64abfa');
+        this.animationManager = new AnimationManager();
 
-        // const animationManager = new AnimationManager();
-
-        // animationManager.add('chance', new Animation([
-        //   sprite.get('chance-1'),
-        //   sprite.get('chance-1'),
-        //   sprite.get('chance-2'),
-        //   sprite.get('chance-3'),
-        //   sprite.get('chance-2'),
-        // ], 8));
+        this.animationManager.add('chance', new Animation([
+          sprite.get('chance-1'),
+          sprite.get('chance-1'),
+          sprite.get('chance-2'),
+          sprite.get('chance-3'),
+          sprite.get('chance-2'),
+        ], 8));
 
         const mapping = {
           // Blocks
-          '.': { image: 'sky' },
-          '#': { image: 'ground', options: { ground: true } },
-          '%': { image: 'bricks', options: { ground: true } },
-          'O': { image: 'chance', options: { ground: true } },
+          '.': { sprite: 'sky', type: 'image' },
+          '#': { sprite: 'ground', type: 'image', options: { ground: true } },
+          '%': { sprite: 'bricks', type: 'image', options: { ground: true } },
+          'O': { sprite: 'chance', type: 'animation', options: { ground: true } },
 
           // Vertical Pipe
-          '╗': { image: 'pipe-vertical-top-left', options: { ground: true } },
-          '╔': { image: 'pipe-vertical-top-right', options: { ground: true } },
-          '⎜': { image: 'pipe-vertical-left', options: { ground: true } },
-          '⎥': { image: 'pipe-vertical-right', options: { ground: true } },
+          '╗': { sprite: 'pipe-vertical-top-left', type: 'image', options: { ground: true } },
+          '╔': { sprite: 'pipe-vertical-top-right', type: 'image', options: { ground: true } },
+          '⎜': { sprite: 'pipe-vertical-left', type: 'image', options: { ground: true } },
+          '⎥': { sprite: 'pipe-vertical-right', type: 'image', options: { ground: true } },
 
           // Structures
-          '╭': { image: 'cloud-1-1', options: { ground: false } },
-          '╌': { image: 'cloud-1-2', options: { ground: false } },
-          '╮': { image: 'cloud-1-3', options: { ground: false } },
-          '╰': { image: 'cloud-2-1', options: { ground: false } },
-          '━': { image: 'cloud-2-2', options: { ground: false } },
-          '╯': { image: 'cloud-2-3', options: { ground: false } },
+          '╭': { sprite: 'cloud-1-1', type: 'image', options: { ground: false } },
+          '╌': { sprite: 'cloud-1-2', type: 'image', options: { ground: false } },
+          '╮': { sprite: 'cloud-1-3', type: 'image', options: { ground: false } },
+          '╰': { sprite: 'cloud-2-1', type: 'image', options: { ground: false } },
+          '━': { sprite: 'cloud-2-2', type: 'image', options: { ground: false } },
+          '╯': { sprite: 'cloud-2-3', type: 'image', options: { ground: false } },
         };
 
         // TODO: refactor clouds and sky with BackgroundLayer which should use a separate TileMap
         // TODO: add different TileMap generation to allow use Animations as image
 
-        return TileMapLoader.fromTxt('/resources/levels/1-1.lvl', this.tileMap, mapping, sprite);
+        const tileMapLoader = new TileMapLoader(sprite, this.animationManager);
+        return tileMapLoader.fromLvl('/resources/levels/1-1.lvl', this.tileMap, mapping);
       })
       .then(() => {
         this.tileCollider = new TileCollider(this.tileMap);
@@ -218,6 +221,8 @@ export default class PlayScene extends Scene {
   }
 
   update(deltaTime) {
+    this.animationManager.updateAll();
+
     this.entities.forEach((entity) => {
       entity.update(deltaTime);
 
