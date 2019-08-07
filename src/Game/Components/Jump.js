@@ -167,6 +167,8 @@ export default class Jump extends Component {
    * @param deltaTime
    */
   apply(deltaTime) {
+    // TODO: fix case when mario jumps higher when goes to the right side than goes to the left
+
     if (this.leftTime > 0) {
       this.entity.velocity.setY(
         -(this.power + this.entity.velocity.scale(this.speedBoost).x),
