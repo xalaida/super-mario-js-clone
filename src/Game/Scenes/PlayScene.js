@@ -32,6 +32,8 @@ export default class PlayScene extends Scene {
     this.gravity = new Vector(0, game.config.physics.gravity);
     this.animationManager = null;
     this.layers = new Map();
+
+    // TODO: add friction and gravity processors into one single place
   }
 
   load() {
