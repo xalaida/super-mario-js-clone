@@ -18,6 +18,16 @@ export default class View {
   }
 
   /**
+   * Fill the view context with color
+   */
+  fill(color) {
+    this.context.save();
+    this.context.fillStyle = color;
+    this.context.fillRect(0, 0, this.context.canvas.width, this.context.canvas.height);
+    this.context.restore();
+  }
+
+  /**
    * Draw a rectangle
    *
    * @param {Vector} position
