@@ -87,23 +87,6 @@ export default class TileMap {
   }
 
   /**
-   * Render the tilemap
-   *
-   * @param {View} view
-   * @param {Camera} camera
-   */
-  render(view, camera) {
-    this.findInBounds(camera.getBounds())
-      .forEach((tile) => {
-        tile.render(view, camera);
-
-        if (this.config.debug.tiles) {
-          view.outline(tile.position.minus(camera.position), tile.size, '#5993ab61');
-        }
-      });
-  }
-
-  /**
    * Transform indices to the tilemap position
    *
    * @param {Number} xIndex
@@ -126,5 +109,32 @@ export default class TileMap {
   toIndices(position) {
     const { x, y } = position.divide(this.tileSize.toVector()).floor();
     return [x, y];
+  }
+
+  /**
+   * Render the tilemap
+   *
+   * @param {View} view
+   * @param {Camera} camera
+   */
+  render(view, camera) {
+    this.findInBounds(camera.getBounds())
+      .forEach((tile) => {
+        tile.render(view, camera);
+      });
+  }
+
+  /**
+   * Render the debug grid
+   *
+   * @param {View} view
+   * @param {Camera} camera
+   */
+  debug(view, camera) {
+    this.findInBounds(camera.getBounds())
+      .forEach((tile) => {
+        // TODO: extract all colors into the config
+        view.outline(tile.position.minus(camera.position), tile.size, 'green');
+      });
   }
 }
