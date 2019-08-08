@@ -9,8 +9,8 @@ export default class Controller {
     this.listenEvents();
   }
 
-  enableDebug() {
-    this.debug = true;
+  enableLogging() {
+    this.logging = true;
   }
 
   static defaultControls() {
@@ -46,7 +46,7 @@ export default class Controller {
   }
 
   handleKeyEvent(event, state) {
-    if (this.debug) {
+    if (this.logging) {
       console.log(`Pressed the key: ${event.key}`);
     }
 
@@ -63,7 +63,12 @@ export default class Controller {
     return this.state.get(id);
   }
 
-  render(view) {
+  /**
+   * Render the controller debug status
+   *
+   * @param {View} view
+   */
+  debug(view) {
     Object.values(this.keyBinds).forEach((action, index) => {
       const debugString = `${action.toUpperCase()}: ${this.isPressed(action) ? 'Pressed' : 'Released'}`;
       view.text(debugString, new Vector(10, 20 + (index * 20)));
