@@ -66,7 +66,6 @@ export default class Mario extends Entity {
     this.renderEntity(view, camera);
     this.renderDebug(view);
     this.renderHitBox(view, camera);
-    this.renderJumpDebug(view);
   }
 
   animationFrame() {
@@ -123,6 +122,11 @@ export default class Mario extends Entity {
     if (game.config.debug.hitbox) {
       view.outline(this.position.minus(camera.position), this.size, 'blue');
     }
+  }
+
+
+  debug(view) {
+    this.renderJumpDebug(view);
   }
 
   renderJumpDebug(view) {
