@@ -18,19 +18,20 @@ import Collisions from '../../Engine/Behaviour/Components/Collisions.js';
 import Falling from '../Components/Falling.js';
 import Turbo from '../Components/Turbo.js';
 import AnimationManager from '../../Engine/Graphic/Animations/AnimationManager.js';
+import BackgroundLayer from '../Layers/BackgroundLayer.js';
+import SkyLayer from '../Layers/SkyLayer.js';
+import CollisionsLayer from '../Layers/CollisionsLayer.js';
+import DebugLayer from '../Layers/DebugLayer.js';
 
 export default class PlayScene extends Scene {
   constructor() {
     super();
     this.camera = new Camera(Vector.zero(), new Size(500, 400));
-    this.tileMap = null;
-    this.controller = null;
     this.tileCollider = null;
     this.entities = [];
     this.gravity = new Vector(0, game.config.physics.gravity);
     this.animationManager = null;
-    // TODO: extract render logic into beautiful renderable Layers
-    this.layers = [];
+    this.layers = new Map();
   }
 
   load() {
@@ -73,9 +74,6 @@ export default class PlayScene extends Scene {
         return sprite;
       })
       .then((sprite) => {
-        const tileSize = new Size(game.config.tiles.size.width, game.config.tiles.size.height);
-        this.tileMap = new TileMap(game.config, tileSize);
-
         this.animationManager = new AnimationManager();
 
         this.animationManager.add('chance', new Animation([
@@ -88,7 +86,6 @@ export default class PlayScene extends Scene {
 
         const mapping = {
           // Blocks
-          '.': { sprite: 'sky', type: 'image' },
           '#': { sprite: 'ground', type: 'image', options: { ground: true } },
           '%': { sprite: 'bricks', type: 'image', options: { ground: true } },
           'O': { sprite: 'chance', type: 'animation', options: { ground: true } },
@@ -100,22 +97,62 @@ export default class PlayScene extends Scene {
           '⎥': { sprite: 'pipe-vertical-right', type: 'image', options: { ground: true } },
 
           // Structures
-          '╭': { sprite: 'cloud-1-1', type: 'image', options: { ground: false } },
-          '╌': { sprite: 'cloud-1-2', type: 'image', options: { ground: false } },
-          '╮': { sprite: 'cloud-1-3', type: 'image', options: { ground: false } },
-          '╰': { sprite: 'cloud-2-1', type: 'image', options: { ground: false } },
-          '━': { sprite: 'cloud-2-2', type: 'image', options: { ground: false } },
-          '╯': { sprite: 'cloud-2-3', type: 'image', options: { ground: false } },
+          '╭': { sprite: 'cloud-1-1', type: 'image', options: { ground: false, layer: 'background' } },
+          '╌': { sprite: 'cloud-1-2', type: 'image', options: { ground: false, layer: 'background' } },
+          '╮': { sprite: 'cloud-1-3', type: 'image', options: { ground: false, layer: 'background' } },
+          '╰': { sprite: 'cloud-2-1', type: 'image', options: { ground: false, layer: 'background' } },
+          '━': { sprite: 'cloud-2-2', type: 'image', options: { ground: false, layer: 'background' } },
+          '╯': { sprite: 'cloud-2-3', type: 'image', options: { ground: false, layer: 'background' } },
         };
 
-        // TODO: refactor clouds and sky with BackgroundLayer which should use a separate TileMap
-        // TODO: add different TileMap generation to allow use Animations as image
+        const tileSize = new Size(game.config.tiles.size.width, game.config.tiles.size.height);
+        const collisionsTileMap = new TileMap(game.config, tileSize);
+        const backgroundTileMap = new TileMap(game.config, tileSize);
 
-        const tileMapLoader = new TileMapLoader(sprite, this.animationManager);
-        return tileMapLoader.fromLvl('/resources/levels/1-1.lvl', this.tileMap, mapping);
+
+        this.tileCollider = new TileCollider(collisionsTileMap);
+
+        const debugLayer = new DebugLayer();
+
+        if (game.config.debug.tiles) {
+          debugLayer.add(backgroundTileMap);
+          debugLayer.add(collisionsTileMap);
+        }
+
+        if (game.config.debug.collisions) {
+          debugLayer.add(this.tileCollider);
+        }
+
+        if (game.config.debug.camera) {
+          debugLayer.add(this.camera);
+        }
+
+        this.layers.set('sky', new SkyLayer('#64abfa'));
+        this.layers.set('background', new BackgroundLayer(backgroundTileMap));
+        this.layers.set('collisions', new CollisionsLayer(collisionsTileMap, this.entities));
+        this.layers.set('debug', debugLayer);
+
+        return (new TileMapLoader(sprite, this.animationManager))
+          .setTileMaps(collisionsTileMap, backgroundTileMap)
+          .loadLvl('/resources/levels/1-1.lvl', mapping);
       })
       .then(() => {
-        this.tileCollider = new TileCollider(this.tileMap);
+        // Controller initialization
+        const keyBinds = {
+          'ArrowLeft': 'left',
+          'ArrowUp': 'up',
+          'ArrowRight': 'right',
+          'ArrowDown': 'down',
+          ' ': 'actionA',
+        };
+
+        this.controller = new Controller(keyBinds, game.config);
+        this.controller.enableLogging();
+
+        // TODO: refactor
+        if (game.config.debug.controller) {
+          this.layers.get('debug').add(this.controller);
+        }
       });
   }
 
@@ -142,17 +179,6 @@ export default class PlayScene extends Scene {
 
         spriteMap.define('mario-jump-right', new Vector(355, 44), new Size(16, 16));
         spriteMap.define('mario-jump-left', new Vector(142, 44), new Size(16, 16));
-
-        const keyBinds = {
-          'ArrowLeft': 'left',
-          'ArrowUp': 'up',
-          'ArrowRight': 'right',
-          'ArrowDown': 'down',
-          ' ': 'actionA',
-        };
-
-        this.controller = new Controller(keyBinds, game.config);
-        this.controller.enableDebug();
 
         const animationMap = new Map();
 
@@ -248,23 +274,6 @@ export default class PlayScene extends Scene {
   }
 
   render(view) {
-    view.clear();
-
-    this.tileMap.render(view, this.camera);
-
-    if (game.config.debug.collisions) {
-      this.tileCollider.render(view, this.camera);
-      this.tileCollider.reset();
-    }
-
-    this.entities.forEach(entity => entity.render(view, this.camera));
-
-    if (game.config.debug.camera) {
-      this.camera.render(view);
-    }
-
-    if (game.config.debug.controller) {
-      this.controller.render(view);
-    }
+    this.layers.forEach(layer => layer.render(view, this.camera));
   }
 }
