@@ -85,12 +85,13 @@ export default class TileCollider {
     }
   }
 
+  // TODO: refactor this
   reset() {
     this.colladableTiles = [];
     this.checkableTile = [];
   }
 
-  render(view, camera) {
+  debug(view, camera) {
     this.checkableTile.forEach((tile) => {
       view.outline(tile.position.minus(camera.position), tile.size, 'red');
     });
@@ -98,5 +99,7 @@ export default class TileCollider {
     this.colladableTiles.forEach((tile) => {
       view.outline(tile.position.minus(camera.position), tile.size, 'yellow');
     });
+
+    this.reset();
   }
 }
