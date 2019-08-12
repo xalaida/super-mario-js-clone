@@ -32,9 +32,11 @@ const config = new Config({
     tiles: true,
     collisions: true,
     camera: true,
-    hitbox: true,
-    coordinates: true,
     controller: true,
+    colors: {
+      hitBox: 'blue',
+      drawBox: 'red',
+    },
   },
 });
 
