@@ -5,6 +5,8 @@ export default class TileCollider {
     this.colladableTiles = [];
   }
 
+  // TODO: extract all entity updating outside (use only collisions component with collideTop(), collideBottom(), etc. )
+
   checkX(entity) {
     const tiles = this.tileMap.findInBounds(entity.getBounds());
     this.checkableTile.push(...tiles);
@@ -55,6 +57,7 @@ export default class TileCollider {
     if (entity.getBounds().right > tile.getBounds().left) {
       entity.position.setX(tile.position.x - entity.size.width);
       entity.velocity.setX(0);
+      entity.component('collisions').collideRight();
       this.colladableTiles.push(tile);
     }
   }
@@ -63,6 +66,7 @@ export default class TileCollider {
     if (entity.getBounds().left < tile.getBounds().right) {
       entity.position.setX(tile.getBounds().right);
       entity.velocity.setX(0);
+      entity.component('collisions').collideLeft();
       this.colladableTiles.push(tile);
     }
   }
