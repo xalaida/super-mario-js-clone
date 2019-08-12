@@ -1,3 +1,5 @@
+// TODO: rename to animation player (and main method play())
+// TODO: probably use play() as merge result of method switch + pull and add separate switch to allow switching without pulling
 export default class AnimationSwitcher {
   constructor(animationMap = null) {
     this.animations = animationMap || new Map();
