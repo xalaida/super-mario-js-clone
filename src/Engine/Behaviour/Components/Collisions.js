@@ -68,6 +68,7 @@ export default class Collisions extends Component {
   }
 
   /**
+   * TODO: rename the function with correct spelling (steal from another engines)
    * Determine if left side has a collision
    */
   isCollideLeft() {
