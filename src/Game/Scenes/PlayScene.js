@@ -22,15 +22,18 @@ import BackgroundLayer from '../Layers/BackgroundLayer.js';
 import SkyLayer from '../Layers/SkyLayer.js';
 import CollisionsLayer from '../Layers/CollisionsLayer.js';
 import DebugLayer from '../Layers/DebugLayer.js';
+import Goomba from '../Entities/Goomba.js';
+import Walking from '../Components/Walking.js';
+import Koopa from '../Entities/Koopa.js';
 
 export default class PlayScene extends Scene {
   constructor() {
     super();
     this.camera = new Camera(Vector.zero(), new Size(500, 400));
     this.tileCollider = null;
-    this.entities = [];
     this.gravity = new Vector(0, game.config.physics.gravity);
     this.animationManager = null;
+    this.entities = new Map();
     this.layers = new Map();
 
     // TODO: add friction and gravity processors into one single place
@@ -40,7 +43,8 @@ export default class PlayScene extends Scene {
     return Promise.all([
       this.loadTiles(),
       this.loadEntities(),
-    ]);
+    ])
+      .then(() => this.loadDebug());
   }
 
   loadTiles() {
@@ -163,6 +167,10 @@ export default class PlayScene extends Scene {
       .then((image) => {
         const spriteMap = new SpriteMap(image);
 
+        /**
+         * Mario
+         */
+
         // Idle
         spriteMap.define('mario-idle-right', new Vector(275, 44), new Size(16, 16));
         spriteMap.define('mario-idle-left', new Vector(222, 44), new Size(16, 16));
@@ -176,12 +184,30 @@ export default class PlayScene extends Scene {
         spriteMap.define('mario-move-left-2', new Vector(193, 44), new Size(16, 16));
         spriteMap.define('mario-move-left-3', new Vector(177, 44), new Size(16, 16));
 
+        // Break
         spriteMap.define('mario-break-right', new Vector(337, 44), new Size(16, 16));
         spriteMap.define('mario-break-left', new Vector(160, 44), new Size(16, 16));
 
+        // Jump
         spriteMap.define('mario-jump-right', new Vector(355, 44), new Size(16, 16));
         spriteMap.define('mario-jump-left', new Vector(142, 44), new Size(16, 16));
 
+        /**
+         *  Goomba
+         */
+        spriteMap.define('goomba-move-1', new Vector(296, 187), new Size(16, 16));
+        spriteMap.define('goomba-move-2', new Vector(315, 187), new Size(16, 16));
+        spriteMap.define('goomba-flat', new Vector(277, 43), new Size(16, 16));
+
+        /**
+         *  Koopa
+         */
+        spriteMap.define('koopa-move-1', new Vector(296, 206), new Size(16, 24));
+        spriteMap.define('koopa-move-2', new Vector(315, 206), new Size(16, 24));
+
+        return spriteMap;
+      })
+      .then((spriteMap) => {
         const animationMap = new Map();
 
         animationMap.set('moveRight', new Animation([
@@ -220,10 +246,8 @@ export default class PlayScene extends Scene {
           spriteMap.get('mario-jump-right'),
         ]));
 
+        const mario = new Mario(this.controller, animationMap);
 
-        return new Mario(this.controller, animationMap);
-      })
-      .then((mario) => {
         mario.addComponent(new Jump(mario));
         mario.addComponent(new Falling(mario));
         mario.addComponent(new Turbo(mario));
@@ -244,8 +268,45 @@ export default class PlayScene extends Scene {
           mario.position.set(this.camera.position.plus(position));
         });
 
-        this.entities.push(mario);
+        this.entities.set('mario', mario);
+
+        return spriteMap;
+      })
+      .then((spriteMap) => {
+        const animations = new Map();
+
+        animations.set('move', new Animation([
+          spriteMap.get('goomba-move-1'),
+          spriteMap.get('goomba-move-2'),
+        ]));
+
+        const goomba = new Goomba(animations);
+        goomba.addComponent(new Walking(goomba));
+        goomba.addComponent(new Collisions(goomba));
+
+        this.entities.set('goomba', goomba);
+
+        return spriteMap;
+      })
+      .then((spriteMap) => {
+        const animations = new Map();
+
+        animations.set('move', new Animation([
+          spriteMap.get('koopa-move-1'),
+          spriteMap.get('koopa-move-2'),
+        ]));
+
+        const koopa = new Koopa(animations);
+        koopa.addComponent(new Walking(koopa));
+        koopa.addComponent(new Collisions(koopa));
+
+        this.entities.set('koopa', koopa);
       });
+  }
+
+  loadDebug() {
+    this.layers.get('debug').add(this.entities.get('mario'));
+    this.layers.get('debug').add(this.entities.get('koopa'));
   }
 
   update(deltaTime) {
@@ -267,12 +328,14 @@ export default class PlayScene extends Scene {
         entity.position.plusY(entity.velocity.scale(deltaTime)),
       );
       this.tileCollider.checkY(entity);
-
-      // Camera movement
-      if (Math.abs(entity.velocity.x) > 1 && entity.position.x > 100) {
-        this.camera.position.setX(entity.position.x - 100);
-      }
     });
+
+    const mario = this.entities.get('mario');
+
+    // Camera movement
+    if (Math.abs(mario.velocity.x) > 1 && mario.position.x > 100) {
+      this.camera.position.setX(mario.position.x - 100);
+    }
   }
 
   render(view) {
