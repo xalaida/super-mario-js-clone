@@ -63,9 +63,7 @@ export default class Mario extends Entity {
   }
 
   render(view, camera) {
-    this.renderEntity(view, camera);
-    this.renderDebug(view);
-    this.renderHitBox(view, camera);
+    view.spriteImage(this.animationFrame(), this.position.minus(camera.position), this.size);
   }
 
   animationFrame() {
@@ -73,6 +71,7 @@ export default class Mario extends Entity {
     return this.animationSwitcher.pull();
   }
 
+  // TODO: probably separate this logic with methods initiators ('moveRight' -> to method moveRight() and etc...)
   determineAnimationMode() {
     if (!this.component('jump').ready) {
       if (this.direction === DIRECTION_LEFT) {
@@ -105,28 +104,25 @@ export default class Mario extends Entity {
     return this.animationSwitcher.switch('idleLeft');
   }
 
-  renderEntity(view, camera) {
-    view.spriteImage(this.animationFrame(), this.position.minus(camera.position), this.size);
+  debug(view, camera) {
+    this.renderJumpDebug(view);
+    this.renderHitBox(view, camera);
+    this.renderDebug(view);
   }
 
   renderDebug(view) {
-    if (game.config.debug.coordinates) {
-      view.text(`Velocity X: ${this.velocity.x}`, new Vector(200, 20));
-      view.text(`Velocity Y: ${this.velocity.y}`, new Vector(200, 40));
-      view.text(`Position X: ${this.position.x}`, new Vector(200, 60));
-      view.text(`Position Y: ${this.position.y}`, new Vector(200, 80));
-    }
+    view.text(`Velocity X: ${this.velocity.x}`, new Vector(200, 20));
+    view.text(`Velocity Y: ${this.velocity.y}`, new Vector(200, 40));
+    view.text(`Position X: ${this.position.x}`, new Vector(200, 60));
+    view.text(`Position Y: ${this.position.y}`, new Vector(200, 80));
   }
 
   renderHitBox(view, camera) {
-    if (game.config.debug.hitbox) {
-      view.outline(this.position.minus(camera.position), this.size, 'blue');
-    }
-  }
-
-
-  debug(view) {
-    this.renderJumpDebug(view);
+    view.outline(
+      this.position.minus(camera.position),
+      this.size,
+      game.config.debug.colors.hitBox,
+    );
   }
 
   renderJumpDebug(view) {
