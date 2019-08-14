@@ -15,6 +15,9 @@ NEXT STEPS (refactoring):
 - add animations distance support and use distance step as arg for frameRate (instead of hardcoded fps)
 - move all level load declarations and sprite declarations into JSON
 - fix mario physics
+- double check all config parameters usage & core parameters should be placed inside the engine
+- think about replacing all promises with async / await calls
+- use object/array destruction with json spec parsing
 
 NEXT STEPS (features):
 - enemies
