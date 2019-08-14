@@ -25,6 +25,8 @@ import DebugLayer from '../Layers/DebugLayer.js';
 import Goomba from '../Entities/Goomba.js';
 import Walking from '../Components/Walking.js';
 import Koopa from '../Entities/Koopa.js';
+import EntityCollider from '../../Engine/Behaviour/EntityCollider.js';
+import Intersection from '../../Engine/Behaviour/Components/Intersection.js';
 
 export default class PlayScene extends Scene {
   constructor() {
@@ -33,8 +35,9 @@ export default class PlayScene extends Scene {
     this.tileCollider = null;
     this.gravity = new Vector(0, game.config.physics.gravity);
     this.animationManager = null;
-    this.entities = new Map();
     this.layers = new Map();
+    this.entities = new Map();
+    this.entityCollider = new EntityCollider(this.entities);
 
     // TODO: add friction and gravity processors into one single place
   }
@@ -163,6 +166,9 @@ export default class PlayScene extends Scene {
   }
 
   loadEntities() {
+    // TODO: refactor with entity loader which returns entity factory
+    // TODO: example MarioLoader.load().then(factory => factory.create());
+
     return ImageLoader.load('/resources/sprites/characters-sprite.gif')
       .then((image) => {
         const spriteMap = new SpriteMap(image);
@@ -252,6 +258,7 @@ export default class PlayScene extends Scene {
         mario.addComponent(new Falling(mario));
         mario.addComponent(new Turbo(mario));
         mario.addComponent(new Collisions(mario));
+        mario.addComponent(new Intersection(mario));
 
         const mouseController = new MouseController(game.view.context);
 
@@ -283,6 +290,7 @@ export default class PlayScene extends Scene {
         const goomba = new Goomba(animations);
         goomba.addComponent(new Walking(goomba));
         goomba.addComponent(new Collisions(goomba));
+        goomba.addComponent(new Intersection(goomba));
 
         this.entities.set('goomba', goomba);
 
@@ -299,6 +307,7 @@ export default class PlayScene extends Scene {
         const koopa = new Koopa(animations);
         koopa.addComponent(new Walking(koopa));
         koopa.addComponent(new Collisions(koopa));
+        koopa.addComponent(new Intersection(koopa));
 
         this.entities.set('koopa', koopa);
       });
@@ -328,11 +337,13 @@ export default class PlayScene extends Scene {
         entity.position.plusY(entity.velocity.scale(deltaTime)),
       );
       this.tileCollider.checkY(entity);
+
+      this.entityCollider.check(entity);
     });
 
     const mario = this.entities.get('mario');
 
-    // Camera movement
+    // TODO: temporary camera movement
     if (Math.abs(mario.velocity.x) > 1 && mario.position.x > 100) {
       this.camera.position.setX(mario.position.x - 100);
     }
