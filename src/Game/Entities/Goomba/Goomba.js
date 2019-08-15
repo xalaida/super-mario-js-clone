@@ -26,7 +26,16 @@ export default class Goomba extends Entity {
   }
 
   animationFrame() {
-    this.animationSwitcher.switch('move');
+    this.routeAnimation();
+
     return this.animationSwitcher.pull();
+  }
+
+  routeAnimation() {
+    if (this.component('killable').dying) {
+      return this.animationSwitcher.switch('flat');
+    }
+
+    return this.animationSwitcher.switch('move');
   }
 }
