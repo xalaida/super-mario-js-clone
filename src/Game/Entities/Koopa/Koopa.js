@@ -32,8 +32,20 @@ export default class Koopa extends Entity {
   }
 
   animationFrame() {
-    this.animationSwitcher.switch('move');
+    this.routeAnimation();
     return this.animationSwitcher.pull();
+  }
+
+  routeAnimation() {
+    if (this.component('behaviour').state === 'hiding') {
+      return this.animationSwitcher.switch('hiding');
+    }
+
+    if (this.velocity.x > 0) {
+      return this.animationSwitcher.switch('moveRight');
+    }
+
+    return this.animationSwitcher.switch('moveLeft');
   }
 
   debug(view, camera) {
