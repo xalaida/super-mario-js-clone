@@ -38,4 +38,16 @@ export default class Goomba extends Entity {
 
     return this.animationSwitcher.switch('move');
   }
+
+  debug(view, camera) {
+    this.debugHitBox(view, camera);
+  }
+
+  debugHitBox(view, camera) {
+    view.outline(
+      this.position.minus(camera.position),
+      this.size,
+      game.config.debug.colors.hitBox,
+    );
+  }
 }
