@@ -6,7 +6,7 @@ export default class Killable extends Component {
     this.dead = false;
     this.dying = false;
     this.dyingTime = 0;
-    this.deadDelay = 2;
+    this.dyingDuration = 2;
   }
 
   kill() {
@@ -27,7 +27,7 @@ export default class Killable extends Component {
       this.dyingTime += deltaTime;
     }
 
-    if (this.dyingTime >= this.deadDelay) {
+    if (this.dyingTime >= this.dyingDuration) {
       this.dead = true;
 
       // TODO: refactor this (probably use event bus)
