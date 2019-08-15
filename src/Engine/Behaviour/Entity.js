@@ -1,6 +1,9 @@
 export default class Entity {
+  /**
+   * Entity constructor
+   */
   constructor() {
-    this.components = [];
+    this.components = new Map();
   }
 
   /**
@@ -9,28 +12,37 @@ export default class Entity {
    * @param {Component} component
    */
   addComponent(component) {
-    this.components.push(component);
-    this[component.name] = component;
+    this.components.set(component.name, component);
   }
 
   /**
    * Get the component from the entity
    *
-   * @param {string} name
+   * @param {String} name
    * @returns {Component}
    */
   component(name) {
     this.guardUndefinedComponent(name);
-    return this[name];
+    return this.components.get(name);
+  }
+
+  /**
+   * Determine if the entity has the specified component
+   *
+   * @param {String} name
+   * @returns {boolean}
+   */
+  hasComponent(name) {
+    return this.components.has(name);
   }
 
   /**
    * Guard undefined component
    *
-   * @param {string} name
+   * @param {String} name
    */
   guardUndefinedComponent(name) {
-    if (this[name] === undefined) {
+    if (!this.components.has(name)) {
       throw new Error(`Component ${name} is not defined for the entity ${this.constructor.name}`);
     }
   }
