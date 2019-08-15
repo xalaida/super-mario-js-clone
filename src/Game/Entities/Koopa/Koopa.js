@@ -1,8 +1,8 @@
-import Vector from '../../Engine/Math/Vector.js';
-import Size from '../../Engine/Math/Size.js';
-import Bounds from '../../Engine/Math/Bounds.js';
-import AnimationSwitcher from '../../Engine/Graphic/Animations/AnimationSwitcher.js';
-import Entity from '../../Engine/Behaviour/Entity.js';
+import Vector from '../../../Engine/Math/Vector.js';
+import Size from '../../../Engine/Math/Size.js';
+import Bounds from '../../../Engine/Math/Bounds.js';
+import AnimationSwitcher from '../../../Engine/Graphic/Animations/AnimationSwitcher.js';
+import Entity from '../../../Engine/Behaviour/Entity.js';
 
 export default class Koopa extends Entity {
   constructor(animations) {
