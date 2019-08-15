@@ -23,12 +23,16 @@ import SkyLayer from '../Layers/SkyLayer.js';
 import CollisionsLayer from '../Layers/CollisionsLayer.js';
 import DebugLayer from '../Layers/DebugLayer.js';
 import Goomba from '../Entities/Goomba/Goomba.js';
+import GoombaBehaviour from '../Entities/Goomba/Components/Behaviour.js';
 import Walking from '../Components/Walking.js';
 import Koopa from '../Entities/Koopa/Koopa.js';
+import KoopaBehaviour from '../Entities/Koopa/Components/Behaviour.js';
 import EntityCollider from '../../Engine/Behaviour/EntityCollider.js';
 import Intersection from '../../Engine/Behaviour/Components/Intersection.js';
-import GoombaBehaviour from '../Entities/Goomba/Components/GoombaBehaviour.js';
 import Stomp from '../Entities/Mario/Components/Stomp.js';
+import Killable from '../Components/Killable.js';
+import Respawn from '../Entities/Mario/Components/Respawn.js';
+
 
 export default class PlayScene extends Scene {
   constructor() {
@@ -205,13 +209,17 @@ export default class PlayScene extends Scene {
          */
         spriteMap.define('goomba-move-1', new Vector(296, 187), new Size(16, 16));
         spriteMap.define('goomba-move-2', new Vector(315, 187), new Size(16, 16));
-        spriteMap.define('goomba-flat', new Vector(277, 43), new Size(16, 16));
+        spriteMap.define('goomba-flat', new Vector(277, 187), new Size(16, 16));
 
         /**
          *  Koopa
          */
-        spriteMap.define('koopa-move-1', new Vector(296, 206), new Size(16, 24));
-        spriteMap.define('koopa-move-2', new Vector(315, 206), new Size(16, 24));
+        spriteMap.define('koopa-move-right-1', new Vector(296, 206), new Size(16, 24));
+        spriteMap.define('koopa-move-right-2', new Vector(315, 206), new Size(16, 24));
+        spriteMap.define('koopa-move-left-1', new Vector(201, 206), new Size(16, 24));
+        spriteMap.define('koopa-move-left-2', new Vector(182, 206), new Size(16, 24));
+        spriteMap.define('koopa-hiding', new Vector(144, 206), new Size(16, 24));
+        spriteMap.define('koopa-wake-up', new Vector(163, 206), new Size(16, 24));
 
         return spriteMap;
       })
@@ -259,9 +267,11 @@ export default class PlayScene extends Scene {
         mario.addComponent(new Jump(mario));
         mario.addComponent(new Falling(mario));
         mario.addComponent(new Turbo(mario));
-        // mario.addComponent(new Stomp(mario));
+        mario.addComponent(new Stomp(mario));
         mario.addComponent(new Collisions(mario));
         mario.addComponent(new Intersection(mario));
+        mario.addComponent(new Killable(mario));
+        mario.addComponent(new Respawn(mario));
 
         const mouseController = new MouseController(game.view.context);
 
@@ -290,8 +300,13 @@ export default class PlayScene extends Scene {
           spriteMap.get('goomba-move-2'),
         ]));
 
+        animations.set('flat', new Animation([
+          spriteMap.get('goomba-flat'),
+        ]));
+
         const goomba = new Goomba(animations);
         goomba.addComponent(new Walking(goomba));
+        goomba.addComponent(new Killable(goomba));
         goomba.addComponent(new GoombaBehaviour(goomba));
         goomba.addComponent(new Collisions(goomba));
         goomba.addComponent(new Intersection(goomba));
@@ -303,14 +318,25 @@ export default class PlayScene extends Scene {
       .then((spriteMap) => {
         const animations = new Map();
 
-        animations.set('move', new Animation([
-          spriteMap.get('koopa-move-1'),
-          spriteMap.get('koopa-move-2'),
+        animations.set('moveRight', new Animation([
+          spriteMap.get('koopa-move-right-1'),
+          spriteMap.get('koopa-move-right-2'),
+        ]));
+
+        animations.set('moveLeft', new Animation([
+          spriteMap.get('koopa-move-left-1'),
+          spriteMap.get('koopa-move-left-2'),
+        ]));
+
+        animations.set('hiding', new Animation([
+          spriteMap.get('koopa-hiding'),
         ]));
 
         const koopa = new Koopa(animations);
         koopa.addComponent(new Walking(koopa));
         koopa.addComponent(new Collisions(koopa));
+        koopa.addComponent(new Killable(koopa));
+        koopa.addComponent(new KoopaBehaviour(koopa));
         koopa.addComponent(new Intersection(koopa));
 
         this.entities.set('koopa', koopa);
@@ -319,6 +345,7 @@ export default class PlayScene extends Scene {
 
   loadDebug() {
     this.layers.get('debug').add(this.entities.get('mario'));
+    this.layers.get('debug').add(this.entities.get('goomba'));
     this.layers.get('debug').add(this.entities.get('koopa'));
   }
 
