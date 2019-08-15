@@ -10,7 +10,7 @@ import TileMapLoader from '../Loaders/TileMapLoader.js';
 import Camera from '../../Engine/Camera/Camera.js';
 import Animation from '../../Engine/Graphic/Animations/Animation.js';
 import Controller from '../../Engine/Input/Controller.js';
-import Mario from '../Entities/Mario.js';
+import Mario from '../Entities/Mario/Mario.js';
 import TileCollider from '../../Engine/Tiles/TileCollider.js';
 import MouseController from '../../Engine/Input/MouseController.js';
 import Jump from '../Components/Jump.js';
@@ -22,11 +22,13 @@ import BackgroundLayer from '../Layers/BackgroundLayer.js';
 import SkyLayer from '../Layers/SkyLayer.js';
 import CollisionsLayer from '../Layers/CollisionsLayer.js';
 import DebugLayer from '../Layers/DebugLayer.js';
-import Goomba from '../Entities/Goomba.js';
+import Goomba from '../Entities/Goomba/Goomba.js';
 import Walking from '../Components/Walking.js';
-import Koopa from '../Entities/Koopa.js';
+import Koopa from '../Entities/Koopa/Koopa.js';
 import EntityCollider from '../../Engine/Behaviour/EntityCollider.js';
 import Intersection from '../../Engine/Behaviour/Components/Intersection.js';
+import GoombaBehaviour from '../Entities/Goomba/Components/GoombaBehaviour.js';
+import Stomp from '../Entities/Mario/Components/Stomp.js';
 
 export default class PlayScene extends Scene {
   constructor() {
@@ -257,6 +259,7 @@ export default class PlayScene extends Scene {
         mario.addComponent(new Jump(mario));
         mario.addComponent(new Falling(mario));
         mario.addComponent(new Turbo(mario));
+        // mario.addComponent(new Stomp(mario));
         mario.addComponent(new Collisions(mario));
         mario.addComponent(new Intersection(mario));
 
@@ -289,6 +292,7 @@ export default class PlayScene extends Scene {
 
         const goomba = new Goomba(animations);
         goomba.addComponent(new Walking(goomba));
+        goomba.addComponent(new GoombaBehaviour(goomba));
         goomba.addComponent(new Collisions(goomba));
         goomba.addComponent(new Intersection(goomba));
 
