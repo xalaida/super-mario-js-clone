@@ -7,7 +7,14 @@ export default class Intersection extends Component {
   }
 
   intersects(entity) {
-    console.log('intersected');
     this.intersected = entity;
+  }
+
+  reset() {
+    this.intersected = null;
+  }
+
+  update() {
+    this.reset();
   }
 }
