@@ -23,7 +23,7 @@ export default class Behaviour extends Component {
 
       this.entity.component('killable').kill();
 
-      this.entity.velocity.set(Vector.zero());
+      this.entity.velocity.setX(0);
     } else {
       stomper.component('killable').kill();
     }
