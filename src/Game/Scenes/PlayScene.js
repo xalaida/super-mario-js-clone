@@ -23,16 +23,15 @@ import SkyLayer from '../Layers/SkyLayer.js';
 import CollisionsLayer from '../Layers/CollisionsLayer.js';
 import DebugLayer from '../Layers/DebugLayer.js';
 import Goomba from '../Entities/Goomba/Goomba.js';
-import GoombaBehaviour from '../Entities/Goomba/Components/Behaviour.js';
+import GoombaStompable from '../Entities/Goomba/Components/Stompable.js';
 import Walking from '../Components/Walking.js';
 import Koopa from '../Entities/Koopa/Koopa.js';
 import KoopaBehaviour from '../Entities/Koopa/Components/Behaviour.js';
-import EntityCollider from '../../Engine/Behaviour/EntityCollider.js';
 import Intersection from '../../Engine/Behaviour/Components/Intersection.js';
 import Stomp from '../Entities/Mario/Components/Stomp.js';
 import Killable from '../Components/Killable.js';
 import Respawn from '../Entities/Mario/Components/Respawn.js';
-
+import EntityManager from '../../Engine/Behaviour/EntityManager.js';
 
 export default class PlayScene extends Scene {
   constructor() {
@@ -42,8 +41,7 @@ export default class PlayScene extends Scene {
     this.gravity = new Vector(0, game.config.physics.gravity);
     this.animationManager = null;
     this.layers = new Map();
-    this.entities = new Map();
-    this.entityCollider = new EntityCollider(this.entities);
+    this.entityManager = new EntityManager();
 
     // TODO: add friction and gravity processors into one single place
   }
@@ -144,7 +142,7 @@ export default class PlayScene extends Scene {
 
         this.layers.set('sky', new SkyLayer('#64abfa'));
         this.layers.set('background', new BackgroundLayer(backgroundTileMap));
-        this.layers.set('collisions', new CollisionsLayer(collisionsTileMap, this.entities));
+        this.layers.set('collisions', new CollisionsLayer(collisionsTileMap, this.entityManager.getEntities()));
         this.layers.set('debug', debugLayer);
 
         return (new TileMapLoader(sprite, this.animationManager))
@@ -291,7 +289,9 @@ export default class PlayScene extends Scene {
           mario.position.set(this.camera.position.plus(position));
         });
 
-        this.entities.set('mario', mario);
+        this.camera.follow(mario);
+
+        this.entityManager.add(mario);
 
         return spriteMap;
       })
@@ -311,13 +311,13 @@ export default class PlayScene extends Scene {
         goomba.size.setWidth(14).setHeight(16);
         goomba.position.setX(400).setY(200);
 
-        goomba.addComponent(new GoombaBehaviour(goomba));
+        goomba.addComponent(new GoombaStompable(goomba));
         goomba.addComponent(new Walking(goomba));
         goomba.addComponent(new Killable(goomba));
         goomba.addComponent(new Collisions(goomba));
         goomba.addComponent(new Intersection(goomba));
 
-        this.entities.set('goomba', goomba);
+        this.entityManager.add(goomba);
 
         return spriteMap;
       })
@@ -348,20 +348,21 @@ export default class PlayScene extends Scene {
         koopa.addComponent(new Collisions(koopa));
         koopa.addComponent(new Intersection(koopa));
 
-        this.entities.set('koopa', koopa);
+        this.entityManager.add(koopa);
       });
   }
 
   loadDebug() {
-    this.layers.get('debug').add(this.entities.get('mario'));
-    this.layers.get('debug').add(this.entities.get('goomba'));
-    this.layers.get('debug').add(this.entities.get('koopa'));
+    // TODO: refactor with debug entities from future implementation of EntityManager
+    // this.layers.get('debug').add(this.entities.get('mario'));
+    // this.layers.get('debug').add(this.entities.get('goomba'));
+    // this.layers.get('debug').add(this.entities.get('koopa'));
   }
 
   update(deltaTime) {
     this.animationManager.updateAll();
 
-    this.entities.forEach((entity) => {
+    this.entityManager.getEntities().forEach((entity) => {
       entity.update(deltaTime);
 
       entity.velocity.set(
@@ -377,16 +378,11 @@ export default class PlayScene extends Scene {
         entity.position.plusY(entity.velocity.scale(deltaTime)),
       );
       this.tileCollider.checkY(entity);
-
-      this.entityCollider.check(entity);
     });
 
-    const mario = this.entities.get('mario');
+    this.entityManager.checkIntersections();
 
-    // TODO: temporary camera movement
-    if (Math.abs(mario.velocity.x) > 1 && mario.position.x > 100) {
-      this.camera.position.setX(mario.position.x - 100);
-    }
+    this.camera.update();
   }
 
   render(view) {

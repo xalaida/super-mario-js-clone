@@ -40,4 +40,22 @@ export default class Camera {
   debug(view) {
     view.outline(Vector.zero(), this.size, '#00d8ff');
   }
+
+  /**
+   * Follow the entity
+   *
+   * @param {Entity} entity
+   */
+  follow(entity) {
+    this.target = entity;
+  }
+
+  /**
+   * Update the camera
+   */
+  update() {
+    if (Math.abs(this.target.velocity.x) > 1) {
+      this.position.setX(Math.max(0, this.target.position.x - 100));
+    }
+  }
 }
