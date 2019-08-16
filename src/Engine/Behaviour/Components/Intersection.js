@@ -3,15 +3,15 @@ import Component from '../Component.js';
 export default class Intersection extends Component {
   constructor(entity) {
     super('intersection', entity);
-    this.intersected = null;
+    this.entity = null;
   }
 
   intersects(entity) {
-    this.intersected = entity;
+    this.entity = entity;
   }
 
   reset() {
-    this.intersected = null;
+    this.entity = null;
   }
 
   update() {
