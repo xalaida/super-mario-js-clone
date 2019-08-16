@@ -11,10 +11,6 @@ export default class Goomba extends Entity {
     this.animationSwitcher = new AnimationSwitcher(animations);
   }
 
-  getBounds() {
-    return new Bounds(this.position, this.size);
-  }
-
   update(deltaTime) {
     super.update(deltaTime);
   }

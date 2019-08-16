@@ -18,10 +18,6 @@ export default class Mario extends Entity {
     this.animationSwitcher = new AnimationSwitcher(animationMap);
   }
 
-  getBounds() {
-    return new Bounds(this.position, this.size);
-  }
-
   update(deltaTime) {
     super.update(deltaTime);
 

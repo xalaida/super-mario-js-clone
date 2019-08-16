@@ -13,10 +13,6 @@ export default class Koopa extends Entity {
     this.offset = new Vector(1, 8);
   }
 
-  getBounds() {
-    return new Bounds(this.position, this.size);
-  }
-
   update(deltaTime) {
     super.update(deltaTime);
   }

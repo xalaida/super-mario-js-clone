@@ -1,5 +1,6 @@
 import Size from '../Math/Size.js';
 import Vector from '../Math/Vector.js';
+import Bounds from '../Math/Bounds.js';
 
 export default class Entity {
   /**
@@ -10,6 +11,15 @@ export default class Entity {
     this.id = Symbol('id');
     this.size = Size.pixel();
     this.position = Vector.zero();
+  }
+
+  /**
+   * Get the entity bounds
+   *
+   * @returns {Bounds}
+   */
+  getBounds() {
+    return new Bounds(this.position, this.size);
   }
 
   /**
