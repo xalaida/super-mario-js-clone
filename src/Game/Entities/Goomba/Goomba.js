@@ -3,27 +3,33 @@ import AnimationPlayer from '../../../Engine/Graphic/Animations/AnimationPlayer.
 import Entity from '../../../Engine/Behaviour/Entity.js';
 
 export default class Goomba extends Entity {
-  constructor(animations) {
+  /**
+   * Goomba constructor
+   *
+   * @param {Map} animationsMap
+   */
+  constructor(animationsMap) {
     super();
     this.velocity = new Vector(-20, 0);
-    this.animationPlayer = new AnimationPlayer(animations);
+    this.animationPlayer = new AnimationPlayer(animationsMap);
   }
 
-  update(deltaTime) {
-    super.update(deltaTime);
-  }
-
+  /**
+   * Render the entity
+   *
+   * @param {View} view
+   * @param {Camera} camera
+   */
   render(view, camera) {
-    view.spriteImage(this.animationFrame(), this.position.minus(camera.position), this.size);
+    view.spriteImage(this.getAnimationFrame(), camera.getProjection(this.position), this.size);
   }
 
-  animationFrame() {
-    this.routeAnimation();
-
-    return this.animationPlayer.pull();
-  }
-
-  routeAnimation() {
+  /**
+   * Get the animation frame of the entity
+   *
+   * @returns {SpriteImage}
+   */
+  getAnimationFrame() {
     if (this.component('killable').dying) {
       return this.animationPlayer.play('flat');
     }
@@ -31,15 +37,23 @@ export default class Goomba extends Entity {
     return this.animationPlayer.play('move');
   }
 
+  /**
+   * Render the debug information of the entity
+   *
+   * @param {View} view
+   * @param {Camera} camera
+   */
   debug(view, camera) {
     this.debugHitBox(view, camera);
   }
 
+  /**
+   * Render the hitbox of the entity
+   *
+   * @param {View} view
+   * @param {Camera} camera
+   */
   debugHitBox(view, camera) {
-    view.outline(
-      this.position.minus(camera.position),
-      this.size,
-      game.config.debug.colors.hitBox,
-    );
+    view.outline(camera.getProjection(this.position), this.size, game.config.debug.colors.hitBox);
   }
 }
