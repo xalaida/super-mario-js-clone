@@ -1,6 +1,5 @@
 import Vector from '../../../Engine/Math/Vector.js';
-import Bounds from '../../../Engine/Math/Bounds.js';
-import AnimationSwitcher from '../../../Engine/Graphic/Animations/AnimationSwitcher.js';
+import AnimationPlayer from '../../../Engine/Graphic/Animations/AnimationPlayer.js';
 import Entity from '../../../Engine/Behaviour/Entity.js';
 
 const DIRECTION_RIGHT = 'right';
@@ -15,7 +14,7 @@ export default class Mario extends Entity {
     this.accelaration = new Vector(100, 0);
     this.maxSpeed = 100;
     this.direction = DIRECTION_RIGHT;
-    this.animationSwitcher = new AnimationSwitcher(animationMap);
+    this.animationPlayer = new AnimationPlayer(animationMap);
   }
 
   update(deltaTime) {
@@ -61,40 +60,40 @@ export default class Mario extends Entity {
 
   animationFrame() {
     this.determineAnimationMode();
-    return this.animationSwitcher.pull();
+    return this.animationPlayer.pull();
   }
 
   // TODO: probably separate this logic with methods initiators ('moveRight' -> to method moveRight() and etc...)
   determineAnimationMode() {
     if (!this.component('jump').ready) {
       if (this.direction === DIRECTION_LEFT) {
-        return this.animationSwitcher.switch('jumpLeft');
+        return this.animationPlayer.play('jumpLeft');
       }
 
-      return this.animationSwitcher.switch('jumpRight');
+      return this.animationPlayer.play('jumpRight');
     }
 
     if (this.velocity.x > 0) {
       if (this.direction === DIRECTION_LEFT) {
-        return this.animationSwitcher.switch('breakLeft');
+        return this.animationPlayer.play('breakLeft');
       }
 
-      return this.animationSwitcher.switch('moveRight');
+      return this.animationPlayer.play('moveRight');
     }
 
     if (this.velocity.x < 0) {
       if (this.direction === DIRECTION_RIGHT) {
-        return this.animationSwitcher.switch('breakRight');
+        return this.animationPlayer.play('breakRight');
       }
 
-      return this.animationSwitcher.switch('moveLeft');
+      return this.animationPlayer.play('moveLeft');
     }
 
     if (this.direction === DIRECTION_RIGHT) {
-      return this.animationSwitcher.switch('idleRight');
+      return this.animationPlayer.play('idleRight');
     }
 
-    return this.animationSwitcher.switch('idleLeft');
+    return this.animationPlayer.play('idleLeft');
   }
 
   debug(view, camera) {

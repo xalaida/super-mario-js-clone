@@ -1,14 +1,12 @@
 import Vector from '../../../Engine/Math/Vector.js';
-import Size from '../../../Engine/Math/Size.js';
-import Bounds from '../../../Engine/Math/Bounds.js';
-import AnimationSwitcher from '../../../Engine/Graphic/Animations/AnimationSwitcher.js';
+import AnimationPlayer from '../../../Engine/Graphic/Animations/AnimationPlayer.js';
 import Entity from '../../../Engine/Behaviour/Entity.js';
 
 export default class Goomba extends Entity {
   constructor(animations) {
     super();
     this.velocity = new Vector(-20, 0);
-    this.animationSwitcher = new AnimationSwitcher(animations);
+    this.animationPlayer = new AnimationPlayer(animations);
   }
 
   update(deltaTime) {
@@ -22,15 +20,15 @@ export default class Goomba extends Entity {
   animationFrame() {
     this.routeAnimation();
 
-    return this.animationSwitcher.pull();
+    return this.animationPlayer.pull();
   }
 
   routeAnimation() {
     if (this.component('killable').dying) {
-      return this.animationSwitcher.switch('flat');
+      return this.animationPlayer.play('flat');
     }
 
-    return this.animationSwitcher.switch('move');
+    return this.animationPlayer.play('move');
   }
 
   debug(view, camera) {

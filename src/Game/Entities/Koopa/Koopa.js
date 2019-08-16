@@ -1,14 +1,13 @@
 import Vector from '../../../Engine/Math/Vector.js';
 import Size from '../../../Engine/Math/Size.js';
-import Bounds from '../../../Engine/Math/Bounds.js';
-import AnimationSwitcher from '../../../Engine/Graphic/Animations/AnimationSwitcher.js';
+import AnimationPlayer from '../../../Engine/Graphic/Animations/AnimationPlayer.js';
 import Entity from '../../../Engine/Behaviour/Entity.js';
 
 export default class Koopa extends Entity {
   constructor(animations) {
     super();
     this.velocity = new Vector(-20, 0);
-    this.animationSwitcher = new AnimationSwitcher(animations);
+    this.animationPlayer = new AnimationPlayer(animations);
     this.drawBox = new Size(16, 24);
     this.offset = new Vector(1, 8);
   }
@@ -27,19 +26,19 @@ export default class Koopa extends Entity {
 
   animationFrame() {
     this.routeAnimation();
-    return this.animationSwitcher.pull();
+    return this.animationPlayer.pull();
   }
 
   routeAnimation() {
     if (this.component('behaviour').state === 'hiding' || this.component('behaviour').state === 'panic') {
-      return this.animationSwitcher.switch('hiding');
+      return this.animationPlayer.play('hiding');
     }
 
     if (this.velocity.x > 0) {
-      return this.animationSwitcher.switch('moveRight');
+      return this.animationPlayer.play('moveRight');
     }
 
-    return this.animationSwitcher.switch('moveLeft');
+    return this.animationPlayer.play('moveLeft');
   }
 
   debug(view, camera) {
