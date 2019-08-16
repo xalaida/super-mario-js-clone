@@ -1,10 +1,15 @@
 export default class EntityCollider {
+  /**
+   * EntityCollider constructor
+   *
+   * @param {Map<String, Entity>} entities
+   */
   constructor(entities) {
     this.entities = entities;
   }
 
   /**
-   * Check entity intersection with another entities
+   * Check the entity intersection with entities
    *
    * @param {Entity} entity
    */
@@ -15,7 +20,6 @@ export default class EntityCollider {
       }
 
       if (e.getBounds().intersects(entity.getBounds())) {
-        console.log('intersects');
         e.component('intersection').intersects(entity);
         entity.component('intersection').intersects(e);
       }

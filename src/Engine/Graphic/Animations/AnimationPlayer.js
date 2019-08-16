@@ -2,7 +2,7 @@ export default class AnimationPlayer {
   /**
    * AnimationPlayer constructor
    *
-   * @param {Map} animationsMap
+   * @param {Map<String, Animation>} animationsMap
    */
   constructor(animationsMap = null) {
     this.animations = animationsMap || new Map();
