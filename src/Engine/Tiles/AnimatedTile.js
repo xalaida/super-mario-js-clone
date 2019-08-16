@@ -20,6 +20,6 @@ export default class AnimatedTile extends Tile {
    * @param camera
    */
   render(view, camera) {
-    view.spriteImage(this.animation.frame, this.position.minus(camera.position), this.size);
+    view.spriteImage(this.animation.frame, camera.getProjection(this.position), this.size);
   }
 }

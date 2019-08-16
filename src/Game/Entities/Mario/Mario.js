@@ -55,7 +55,7 @@ export default class Mario extends Entity {
   }
 
   render(view, camera) {
-    view.spriteImage(this.animationFrame(), this.position.minus(camera.position), this.size);
+    view.spriteImage(this.animationFrame(), camera.getProjection(this.position), this.size);
   }
 
   animationFrame() {
@@ -104,11 +104,7 @@ export default class Mario extends Entity {
   }
 
   renderHitBox(view, camera) {
-    view.outline(
-      this.position.minus(camera.position),
-      this.size,
-      game.config.debug.colors.hitBox,
-    );
+    view.outline(camera.getProjection(this.position), this.size, game.config.debug.colors.hitBox);
   }
 
   renderJumpDebug(view) {

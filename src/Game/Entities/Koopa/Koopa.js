@@ -50,10 +50,6 @@ export default class Koopa extends Entity {
   }
 
   debugHitBox(view, camera) {
-    view.outline(
-      this.position.minus(camera.position),
-      this.size,
-      game.config.debug.colors.hitBox,
-    );
+    view.outline(camera.getProjection(this.position), this.size, game.config.debug.colors.hitBox);
   }
 }

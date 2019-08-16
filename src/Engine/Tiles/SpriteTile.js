@@ -20,6 +20,6 @@ export default class SpriteTile extends Tile {
    * @param {Camera} camera
    */
   render(view, camera) {
-    view.spriteImage(this.image, this.position.minus(camera.position), this.size);
+    view.spriteImage(this.image, camera.getProjection(this.position), this.size);
   }
 }
