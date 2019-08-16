@@ -14,6 +14,16 @@ export default class Camera {
   }
 
   /**
+   * Get the projection point relative to the camera view
+   *
+   * @param {Vector} position
+   * @returns {Vector}
+   */
+  getProjection(position) {
+    return position.minus(this.position);
+  }
+
+  /**
    * Get the camera bounds
    *
    * @returns {Bounds}
