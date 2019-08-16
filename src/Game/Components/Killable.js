@@ -1,16 +1,33 @@
 import Component from '../../Engine/Behaviour/Component.js';
 
 export default class Killable extends Component {
-  constructor(entity) {
+  /**
+   * Killable constructor
+   *
+   * @param {Entity} entity
+   * @param {EntityManager} entityManager
+   */
+  constructor(entity, entityManager) {
     super('killable', entity);
+    this.entityManager = entityManager;
     this.dead = false;
     this.dying = false;
     this.dyingTime = 0;
     this.dyingDuration = 2;
   }
 
+  // TODO: probably add QUEUE method and run all queues after all entity components have been updated
+  // TODO: this allows to use components in any order
   kill() {
+    if (this.dying) {
+      return;
+    }
+
     this.dying = true;
+
+    if (this.entity.hasComponent('stompable')) {
+      this.entity.component('stompable').isStompable = false;
+    }
   }
 
   revive() {
@@ -32,7 +49,7 @@ export default class Killable extends Component {
 
       // TODO: refactor this (probably use event bus)
       if (!this.entity.hasComponent('respawn')) {
-        game.sceneManager.scene.entities.delete('goomba');
+        this.entityManager.remove(this.entity);
       }
     }
   }
