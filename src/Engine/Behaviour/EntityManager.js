@@ -42,4 +42,14 @@ export default class EntityManager {
   checkIntersections() {
     this.entities.forEach(entity => this.collider.check(entity));
   }
+
+  /**
+   * Debug the entities
+   *
+   * @param {View} view
+   * @param {Camera} camera
+   */
+  debug(view, camera) {
+    this.entities.forEach(entity => entity.debug(view, camera));
+  }
 }
