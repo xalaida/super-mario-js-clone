@@ -25,11 +25,6 @@ export default class Koopa extends Entity {
   }
 
   animationFrame() {
-    this.routeAnimation();
-    return this.animationPlayer.pull();
-  }
-
-  routeAnimation() {
     if (this.component('behaviour').state === 'hiding' || this.component('behaviour').state === 'panic') {
       return this.animationPlayer.play('hiding');
     }

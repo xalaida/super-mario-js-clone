@@ -59,12 +59,6 @@ export default class Mario extends Entity {
   }
 
   animationFrame() {
-    this.determineAnimationMode();
-    return this.animationPlayer.pull();
-  }
-
-  // TODO: probably separate this logic with methods initiators ('moveRight' -> to method moveRight() and etc...)
-  determineAnimationMode() {
     if (!this.component('jump').ready) {
       if (this.direction === DIRECTION_LEFT) {
         return this.animationPlayer.play('jumpLeft');
