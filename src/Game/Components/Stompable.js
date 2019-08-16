@@ -1,4 +1,4 @@
-import Component from '../../../../Engine/Behaviour/Component.js';
+import Component from '../../Engine/Behaviour/Component.js';
 
 export default class Stompable extends Component {
   /**
@@ -8,15 +8,7 @@ export default class Stompable extends Component {
    */
   constructor(entity) {
     super('stompable', entity);
-  }
-
-  /**
-   * Determine if the entity is currently stompable
-   *
-   * @returns {boolean}
-   */
-  isStompable() {
-    return !this.entity.component('killable').dying;
+    this.isStompable = true;
   }
 
   /**
@@ -25,15 +17,15 @@ export default class Stompable extends Component {
   update() {
     const stomper = this.findStomper();
 
-    if (!stomper || !this.isStompable()) {
+    if (!stomper || !this.isStompable) {
       return;
     }
 
     if (stomper.component('falling').state) {
       stomper.component('stomp').bounce();
-      this.stomp();
+      this.entity.onStomp(stomper);
     } else {
-      stomper.component('killable').kill();
+      this.entity.onTouch(stomper);
     }
   }
 
@@ -50,13 +42,5 @@ export default class Stompable extends Component {
     }
 
     return null;
-  }
-
-  /**
-   * Stomp the entity
-   */
-  stomp() {
-    this.entity.component('killable').kill();
-    this.entity.velocity.setX(0);
   }
 }
