@@ -23,10 +23,9 @@ import SkyLayer from '../Layers/SkyLayer.js';
 import CollisionsLayer from '../Layers/CollisionsLayer.js';
 import DebugLayer from '../Layers/DebugLayer.js';
 import Goomba from '../Entities/Goomba/Goomba.js';
-import GoombaStompable from '../Entities/Goomba/Components/Stompable.js';
+import Stompable from '../Components/Stompable.js';
 import Walking from '../Components/Walking.js';
 import Koopa from '../Entities/Koopa/Koopa.js';
-import KoopaBehaviour from '../Entities/Koopa/Components/Behaviour.js';
 import Intersection from '../../Engine/Behaviour/Components/Intersection.js';
 import Stomp from '../Entities/Mario/Components/Stomp.js';
 import Killable from '../Components/Killable.js';
@@ -148,25 +147,6 @@ export default class PlayScene extends Scene {
         return (new TileMapLoader(sprite, this.animationManager))
           .setTileMaps(collisionsTileMap, backgroundTileMap)
           .loadLvl('/resources/levels/1-1.lvl', mapping);
-      })
-      .then(() => {
-        // Controller initialization
-        const keyBinds = {
-          'ArrowLeft': 'left',
-          'ArrowUp': 'up',
-          'ArrowRight': 'right',
-          'ArrowDown': 'down',
-          ' ': 'actionA',
-        };
-
-        // TODO: fix controller sometimes throws error 'cannot get isPressed of undefined (probably can fixed with promise wait)'
-        this.controller = new Controller(keyBinds, game.config);
-        this.controller.enableLogging();
-
-        // TODO: refactor
-        if (game.config.debug.controller) {
-          this.layers.get('debug').add(this.controller);
-        }
       });
   }
 
@@ -261,6 +241,19 @@ export default class PlayScene extends Scene {
           spriteMap.get('mario-jump-right'),
         ]));
 
+        // Controller initialization
+        const keyBinds = {
+          'ArrowLeft': 'left',
+          'ArrowUp': 'up',
+          'ArrowRight': 'right',
+          'ArrowDown': 'down',
+          ' ': 'actionA',
+        };
+
+        // TODO: fix controller sometimes throws error 'cannot get isPressed of undefined (probably can fixed with promise wait)'
+        this.controller = new Controller(keyBinds, game.config);
+        this.controller.enableLogging();
+
         const mario = new Mario(this.controller, animationMap);
         mario.size.setWidth(14).setHeight(16);
         mario.position.setX(100).setY(200);
@@ -271,7 +264,7 @@ export default class PlayScene extends Scene {
         mario.addComponent(new Stomp(mario));
         mario.addComponent(new Collisions(mario));
         mario.addComponent(new Intersection(mario));
-        mario.addComponent(new Killable(mario));
+        mario.addComponent(new Killable(mario, this.entityManager));
         mario.addComponent(new Respawn(mario));
 
         const mouseController = new MouseController(game.view.context);
@@ -311,9 +304,9 @@ export default class PlayScene extends Scene {
         goomba.size.setWidth(14).setHeight(16);
         goomba.position.setX(400).setY(200);
 
-        goomba.addComponent(new GoombaStompable(goomba));
+        goomba.addComponent(new Stompable(goomba));
         goomba.addComponent(new Walking(goomba));
-        goomba.addComponent(new Killable(goomba));
+        goomba.addComponent(new Killable(goomba, this.entityManager));
         goomba.addComponent(new Collisions(goomba));
         goomba.addComponent(new Intersection(goomba));
 
@@ -342,9 +335,9 @@ export default class PlayScene extends Scene {
         koopa.size.setWidth(14).setHeight(16);
         koopa.position.setX(350).setY(200);
 
-        koopa.addComponent(new KoopaBehaviour(koopa));
+        koopa.addComponent(new Stompable(koopa));
         koopa.addComponent(new Walking(koopa));
-        koopa.addComponent(new Killable(koopa));
+        koopa.addComponent(new Killable(koopa, this.entityManager));
         koopa.addComponent(new Collisions(koopa));
         koopa.addComponent(new Intersection(koopa));
 
@@ -353,10 +346,12 @@ export default class PlayScene extends Scene {
   }
 
   loadDebug() {
-    // TODO: refactor with debug entities from future implementation of EntityManager
-    // this.layers.get('debug').add(this.entities.get('mario'));
-    // this.layers.get('debug').add(this.entities.get('goomba'));
-    // this.layers.get('debug').add(this.entities.get('koopa'));
+    this.layers.get('debug').add(this.entityManager);
+
+    // TODO: refactor
+    if (game.config.debug.controller) {
+      this.layers.get('debug').add(this.controller);
+    }
   }
 
   update(deltaTime) {
