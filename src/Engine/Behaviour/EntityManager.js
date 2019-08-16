@@ -8,4 +8,38 @@ export default class EntityManager {
     this.entities = new Map();
     this.collider = new EntityCollider(this.entities);
   }
+
+  /**
+   * Get entities collection
+   *
+   * @returns {Map<String, Entity>}
+   */
+  getEntities() {
+    return this.entities;
+  }
+
+  /**
+   * Add the new entity to collection
+   *
+   * @param {Entity} entity
+   */
+  add(entity) {
+    this.entities.set(entity.id, entity);
+  }
+
+  /**
+   * Remove the entity
+   *
+   * @param entity
+   */
+  remove(entity) {
+    this.entities.delete(entity.id);
+  }
+
+  /**
+   * Check entities intersection
+   */
+  checkIntersections() {
+    this.entities.forEach(entity => this.collider.check(entity));
+  }
 }
