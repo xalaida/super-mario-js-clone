@@ -161,6 +161,7 @@ export default class PlayScene extends Scene {
           ' ': 'actionA',
         };
 
+        // TODO: fix controller sometimes throws error 'cannot get isPressed of undefined (probably can fixed with promise wait)'
         this.controller = new Controller(keyBinds, game.config);
         this.controller.enableLogging();
 
@@ -263,6 +264,8 @@ export default class PlayScene extends Scene {
         ]));
 
         const mario = new Mario(this.controller, animationMap);
+        mario.size.setWidth(14).setHeight(16);
+        mario.position.setX(100).setY(200);
 
         mario.addComponent(new Jump(mario));
         mario.addComponent(new Falling(mario));
@@ -305,9 +308,12 @@ export default class PlayScene extends Scene {
         ]));
 
         const goomba = new Goomba(animations);
+        goomba.size.setWidth(14).setHeight(16);
+        goomba.position.setX(400).setY(200);
+
+        goomba.addComponent(new GoombaBehaviour(goomba));
         goomba.addComponent(new Walking(goomba));
         goomba.addComponent(new Killable(goomba));
-        goomba.addComponent(new GoombaBehaviour(goomba));
         goomba.addComponent(new Collisions(goomba));
         goomba.addComponent(new Intersection(goomba));
 
@@ -333,10 +339,13 @@ export default class PlayScene extends Scene {
         ]));
 
         const koopa = new Koopa(animations);
-        koopa.addComponent(new Walking(koopa));
-        koopa.addComponent(new Collisions(koopa));
-        koopa.addComponent(new Killable(koopa));
+        koopa.size.setWidth(14).setHeight(16);
+        koopa.position.setX(350).setY(200);
+
         koopa.addComponent(new KoopaBehaviour(koopa));
+        koopa.addComponent(new Walking(koopa));
+        koopa.addComponent(new Killable(koopa));
+        koopa.addComponent(new Collisions(koopa));
         koopa.addComponent(new Intersection(koopa));
 
         this.entities.set('koopa', koopa);

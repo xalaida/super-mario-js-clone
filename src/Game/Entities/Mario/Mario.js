@@ -1,5 +1,4 @@
 import Vector from '../../../Engine/Math/Vector.js';
-import Size from '../../../Engine/Math/Size.js';
 import Bounds from '../../../Engine/Math/Bounds.js';
 import AnimationSwitcher from '../../../Engine/Graphic/Animations/AnimationSwitcher.js';
 import Entity from '../../../Engine/Behaviour/Entity.js';
@@ -11,8 +10,6 @@ export default class Mario extends Entity {
   constructor(controller, animationMap) {
     super();
     this.controller = controller;
-    this.size = new Size(14, 16);
-    this.position = new Vector(100, 200);
     this.velocity = Vector.zero();
     this.deceleration = new Vector(100, 0);
     this.accelaration = new Vector(100, 0);

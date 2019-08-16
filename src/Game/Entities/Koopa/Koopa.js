@@ -7,8 +7,6 @@ import Entity from '../../../Engine/Behaviour/Entity.js';
 export default class Koopa extends Entity {
   constructor(animations) {
     super();
-    this.size = new Size(14, 16);
-    this.position = new Vector(350, 200);
     this.velocity = new Vector(-20, 0);
     this.animationSwitcher = new AnimationSwitcher(animations);
     this.drawBox = new Size(16, 24);
@@ -37,7 +35,7 @@ export default class Koopa extends Entity {
   }
 
   routeAnimation() {
-    if (this.component('behaviour').state === 'hiding') {
+    if (this.component('behaviour').state === 'hiding' || this.component('behaviour').state === 'panic') {
       return this.animationSwitcher.switch('hiding');
     }
 
