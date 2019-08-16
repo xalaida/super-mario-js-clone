@@ -1,9 +1,15 @@
+import Size from '../Math/Size.js';
+import Vector from '../Math/Vector.js';
+
 export default class Entity {
   /**
    * Entity constructor
    */
   constructor() {
     this.components = new Map();
+    this.id = Symbol('id');
+    this.size = Size.pixel();
+    this.position = Vector.zero();
   }
 
   /**
