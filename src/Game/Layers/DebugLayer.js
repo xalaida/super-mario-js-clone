@@ -19,7 +19,7 @@ export default class DebugLayer {
   /**
    * Guard not debuggable objects
    *
-   * @param debuggable
+   * @param {*} debuggable
    */
   static guardDebuggable(debuggable) {
     if (typeof debuggable.debug !== 'function') {
