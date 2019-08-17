@@ -16,75 +16,82 @@ export default class Collisions extends Component {
    */
   init() {
     this.state = {
-      up: false,
-      down: false,
-      left: false,
-      right: false,
+      up: null,
+      down: null,
+      left: null,
+      right: null,
     };
   }
 
   /**
    * Set a collision from the top side
+   *
+   * @param {Tile} tile
    */
-  collideTop() {
-    this.state.top = true;
+  setFromTop(tile) {
+    this.state.top = tile;
   }
 
   /**
    * Set a collision from the right side
+   *
+   * @param {Tile} tile
    */
-  collideRight() {
-    this.state.right = true;
+  setFromRight(tile) {
+    this.state.right = tile;
   }
 
   /**
    * Set a collision from the bottom side
+   *
+   * @param {Tile} tile
    */
-  collideBottom() {
-    this.state.bottom = true;
+  setFromBottom(tile) {
+    this.state.bottom = tile;
   }
 
   /**
    * Set a collision from the left side
+   *
+   * @param {Tile} tile
    */
-  collideLeft() {
-    this.state.left = true;
+  setFromLeft(tile) {
+    this.state.left = tile;
   }
 
   /**
-   * Determine if top side has a collision
+   * Get a collision from the top side
    *
-   * @returns {Boolean}
+   * @returns {Tile|null}
    */
-  isCollideTop() {
+  getFromTop() {
     return this.state.top;
   }
 
   /**
-   * Determine if right side has a collision
+   * Get a collision from the right side
    *
-   * @returns {Boolean}
+   * @returns {Tile|null}
    */
-  isCollideRight() {
+  getFromRight() {
     return this.state.right;
   }
 
   /**
-   * Determine if bottom side has a collision
+   * Get a collision from the bottom side
    *
-   * @returns {Boolean}
+   * @returns {Tile|null}
    */
-  isCollideBottom() {
+  getFromBottom() {
     return this.state.bottom;
   }
 
   /**
-   * Determine if left side has a collision
-   * TODO: rename the function with correct spelling (steal from another engines)
+   * Get a collision from the left side
    *
-   * @returns {Boolean}
+   * @returns {Tile|null}
    */
-  isCollideLeft() {
+  getFromLeft() {
     return this.state.left;
   }
 
