@@ -1,52 +1,19 @@
+import Entity from '../../../Engine/Behaviour/Entity.js';
 import Vector from '../../../Engine/Math/Vector.js';
 import AnimationPlayer from '../../../Engine/Graphic/Animations/AnimationPlayer.js';
-import Entity from '../../../Engine/Behaviour/Entity.js';
-
-const DIRECTION_RIGHT = 'right';
-const DIRECTION_LEFT = 'left';
 
 export default class Mario extends Entity {
-  constructor(controller, animationMap) {
+  /**
+   * Mario constructor
+   *
+   * @param {Controller} controller
+   * @param {Map<String, Animation>} animationsMap
+   */
+  constructor(controller, animationsMap) {
     super();
     this.controller = controller;
-    this.velocity = Vector.zero();
     this.deceleration = new Vector(100, 0);
-    this.accelaration = new Vector(100, 0);
-    this.maxSpeed = 100;
-    this.direction = DIRECTION_RIGHT;
-    this.animationPlayer = new AnimationPlayer(animationMap);
-  }
-
-  update(deltaTime) {
-    super.update(deltaTime);
-
-    if (this.controller.isPressed('left')) {
-      this.moveLeft(deltaTime);
-    } else if (this.controller.isPressed('right')) {
-      this.moveRight(deltaTime);
-    } else {
-      this.decelerate(deltaTime);
-    }
-  }
-
-  moveLeft(deltaTime) {
-    this.velocity.set(this.velocity.minusX(this.accelaration.scale(deltaTime)));
-
-    if (Math.abs(this.velocity.x) > this.maxSpeed) {
-      this.velocity.setX(-this.maxSpeed);
-    }
-
-    this.direction = DIRECTION_LEFT;
-  }
-
-  moveRight(deltaTime) {
-    this.velocity.set(this.velocity.plusX(this.accelaration.scale(deltaTime)));
-
-    if (Math.abs(this.velocity.x) > this.maxSpeed) {
-      this.velocity.setX(this.maxSpeed);
-    }
-
-    this.direction = DIRECTION_RIGHT;
+    this.animationPlayer = new AnimationPlayer(animationsMap);
   }
 
   decelerate(deltaTime) {
@@ -54,13 +21,24 @@ export default class Mario extends Entity {
     this.velocity.x += this.velocity.x > 0 ? -deceleration : deceleration;
   }
 
+  /**
+   * Render the entity
+   *
+   * @param {View} view
+   * @param {Camera} camera
+   */
   render(view, camera) {
-    view.spriteImage(this.animationFrame(), camera.getProjection(this.position), this.size);
+    view.spriteImage(this.getAnimationFrame(), camera.getProjection(this.position), this.size);
   }
 
-  animationFrame() {
-    if (!this.component('jump').ready) {
-      if (this.direction === DIRECTION_LEFT) {
+  /**
+   * Get the animation frame of the entity
+   *
+   * @returns {SpriteImage}
+   */
+  getAnimationFrame() {
+    if (this.component('jump').active) {
+      if (this.component('direction').isLeft()) {
         return this.animationPlayer.play('jumpLeft');
       }
 
@@ -68,7 +46,7 @@ export default class Mario extends Entity {
     }
 
     if (this.velocity.x > 0) {
-      if (this.direction === DIRECTION_LEFT) {
+      if (this.component('direction').isLeft()) {
         return this.animationPlayer.play('breakLeft');
       }
 
@@ -76,26 +54,37 @@ export default class Mario extends Entity {
     }
 
     if (this.velocity.x < 0) {
-      if (this.direction === DIRECTION_RIGHT) {
+      if (this.component('direction').isRight()) {
         return this.animationPlayer.play('breakRight');
       }
 
       return this.animationPlayer.play('moveLeft');
     }
 
-    if (this.direction === DIRECTION_RIGHT) {
+    if (this.component('direction').isRight()) {
       return this.animationPlayer.play('idleRight');
     }
 
     return this.animationPlayer.play('idleLeft');
   }
 
+  /**
+   * Render the debug information
+   *
+   * @param {View} view
+   * @param {Camera} camera
+   */
   debug(view, camera) {
     this.renderJumpDebug(view);
     this.renderHitBox(view, camera);
     this.renderDebug(view);
   }
 
+  /**
+   * Render the debug information about velocity
+   *
+   * @param {View} view
+   */
   renderDebug(view) {
     view.text(`Velocity X: ${this.velocity.x}`, new Vector(200, 20));
     view.text(`Velocity Y: ${this.velocity.y}`, new Vector(200, 40));
@@ -103,10 +92,21 @@ export default class Mario extends Entity {
     view.text(`Position Y: ${this.position.y}`, new Vector(200, 80));
   }
 
+  /**
+   * Render the hit box
+   *
+   * @param {View} view
+   * @param {Camera} camera
+   */
   renderHitBox(view, camera) {
     view.outline(camera.getProjection(this.position), this.size, game.config.debug.colors.hitBox);
   }
 
+  /**
+   * Render the jump debug
+   *
+   * @param {View} view
+   */
   renderJumpDebug(view) {
     view.text(`Jump ready: ${this.component('jump').ready}`, new Vector(200, 100));
     view.text(`Jump left time: ${this.component('jump').leftTime}`, new Vector(200, 120));
