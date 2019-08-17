@@ -16,8 +16,9 @@ export default class Killable extends Component {
     this.dyingDuration = 2;
   }
 
-  // TODO: probably add QUEUE method and run all queues after all entity components have been updated
-  // TODO: this allows to use components in any order
+  /**
+   * Kill the entity
+   */
   kill() {
     if (this.dying) {
       return;
@@ -30,6 +31,9 @@ export default class Killable extends Component {
     }
   }
 
+  /**
+   * Revive the entity
+   */
   revive() {
     this.dead = false;
     this.dying = false;
@@ -38,6 +42,8 @@ export default class Killable extends Component {
 
   /**
    * Update the killable component
+   *
+   * @param {Number} deltaTime
    */
   update(deltaTime) {
     if (this.dying) {
@@ -47,7 +53,7 @@ export default class Killable extends Component {
     if (this.dyingTime >= this.dyingDuration) {
       this.dead = true;
 
-      // TODO: refactor this (probably use event bus)
+      // TODO: try to refactor with more friendly api
       if (!this.entity.hasComponent('respawn')) {
         this.entityManager.remove(this.entity);
       }

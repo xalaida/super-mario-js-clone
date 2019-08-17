@@ -1,13 +1,18 @@
 import Component from '../../Engine/Behaviour/Component.js';
 import Vector from '../../Engine/Math/Vector.js';
 
-export default class Jump extends Component {
+export default class Turbo extends Component {
+  /**
+   * Turbo constructor
+   *
+   * @param {Entity} entity
+   */
   constructor(entity) {
     super('turbo', entity);
   }
 
   /**
-   * Update jump component
+   * Update the turbo component
    */
   update() {
     if (this.entity.controller.isPressed('actionA')) {
