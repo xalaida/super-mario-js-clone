@@ -34,6 +34,7 @@ import EntityManager from '../../Engine/Behaviour/EntityManager.js';
 import WalkingState from '../Entities/Koopa/States/WalkingState.js';
 import Solid from '../../Engine/Behaviour/Components/Solid.js';
 import Direction from '../Components/Direction.js';
+import Movement from '../Entities/Mario/Components/Movement.js';
 
 export default class PlayScene extends Scene {
   constructor() {
@@ -262,6 +263,7 @@ export default class PlayScene extends Scene {
         mario.position.setX(100).setY(200);
 
         mario.addComponent(new Jump(mario));
+        mario.addComponent(new Movement(mario));
         mario.addComponent(new Falling(mario));
         mario.addComponent(Direction.right(mario));
         mario.addComponent(new Turbo(mario));
