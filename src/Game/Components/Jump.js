@@ -58,6 +58,15 @@ export default class Jump extends Component {
   }
 
   /**
+   * Determine if the jumping process is active
+   *
+   * @returns {Boolean}
+   */
+  get active() {
+    return !this.ready;
+  }
+
+  /**
    * Update the jump component
    *
    * @param {Number} deltaTime
