@@ -7,13 +7,13 @@ export default class Koopa extends Entity {
   /**
    * Koopa constructor
    *
-   * @param animations
+   * @param {Map<String, Animation>} animationsMap
    */
-  constructor(animations) {
+  constructor(animationsMap) {
     super();
     this.drawBox = new Size(16, 24);
     this.offset = new Vector(1, 8);
-    this.animationPlayer = new AnimationPlayer(animations);
+    this.animationPlayer = new AnimationPlayer(animationsMap);
   }
 
   /**

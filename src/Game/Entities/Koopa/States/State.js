@@ -30,7 +30,7 @@ export default class State {
   }
 
   /**
-   * Get animation frame for the entity in the state
+   * Get the animation frame for the entity in the state
    *
    * @returns {SpriteImage}
    */
