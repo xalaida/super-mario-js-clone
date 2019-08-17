@@ -3,7 +3,7 @@ export default class CollisionsLayer {
    * CollisionsLayer constructor
    *
    * @param {TileMap} tileMap
-   * @param {Array|Map} entities
+   * @param {Map} entities
    */
   constructor(tileMap, entities) {
     this.tileMap = tileMap;
