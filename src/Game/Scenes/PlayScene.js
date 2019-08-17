@@ -31,6 +31,9 @@ import Stomp from '../Entities/Mario/Components/Stomp.js';
 import Killable from '../Components/Killable.js';
 import Respawn from '../Entities/Mario/Components/Respawn.js';
 import EntityManager from '../../Engine/Behaviour/EntityManager.js';
+import WalkingState from '../Entities/Koopa/States/WalkingState.js';
+import Solid from '../../Engine/Behaviour/Components/Solid.js';
+import Direction from '../Components/Direction.js';
 
 export default class PlayScene extends Scene {
   constructor() {
@@ -98,23 +101,23 @@ export default class PlayScene extends Scene {
 
         const mapping = {
           // Blocks
-          '#': { sprite: 'ground', type: 'image', options: { ground: true } },
-          '%': { sprite: 'bricks', type: 'image', options: { ground: true } },
-          'O': { sprite: 'chance', type: 'animation', options: { ground: true } },
+          '#': { sprite: 'ground', type: 'image', options: { solid: true } },
+          '%': { sprite: 'bricks', type: 'image', options: { solid: true } },
+          'O': { sprite: 'chance', type: 'animation', options: { solid: true } },
 
           // Vertical Pipe
-          '╗': { sprite: 'pipe-vertical-top-left', type: 'image', options: { ground: true } },
-          '╔': { sprite: 'pipe-vertical-top-right', type: 'image', options: { ground: true } },
-          '⎜': { sprite: 'pipe-vertical-left', type: 'image', options: { ground: true } },
-          '⎥': { sprite: 'pipe-vertical-right', type: 'image', options: { ground: true } },
+          '╗': { sprite: 'pipe-vertical-top-left', type: 'image', options: { solid: true } },
+          '╔': { sprite: 'pipe-vertical-top-right', type: 'image', options: { solid: true } },
+          '⎜': { sprite: 'pipe-vertical-left', type: 'image', options: { solid: true } },
+          '⎥': { sprite: 'pipe-vertical-right', type: 'image', options: { solid: true } },
 
           // Structures
-          '╭': { sprite: 'cloud-1-1', type: 'image', options: { ground: false, layer: 'background' } },
-          '╌': { sprite: 'cloud-1-2', type: 'image', options: { ground: false, layer: 'background' } },
-          '╮': { sprite: 'cloud-1-3', type: 'image', options: { ground: false, layer: 'background' } },
-          '╰': { sprite: 'cloud-2-1', type: 'image', options: { ground: false, layer: 'background' } },
-          '━': { sprite: 'cloud-2-2', type: 'image', options: { ground: false, layer: 'background' } },
-          '╯': { sprite: 'cloud-2-3', type: 'image', options: { ground: false, layer: 'background' } },
+          '╭': { sprite: 'cloud-1-1', type: 'image', options: { solid: false, layer: 'background' } },
+          '╌': { sprite: 'cloud-1-2', type: 'image', options: { solid: false, layer: 'background' } },
+          '╮': { sprite: 'cloud-1-3', type: 'image', options: { solid: false, layer: 'background' } },
+          '╰': { sprite: 'cloud-2-1', type: 'image', options: { solid: false, layer: 'background' } },
+          '━': { sprite: 'cloud-2-2', type: 'image', options: { solid: false, layer: 'background' } },
+          '╯': { sprite: 'cloud-2-3', type: 'image', options: { solid: false, layer: 'background' } },
         };
 
         const tileSize = new Size(game.config.tiles.size.width, game.config.tiles.size.height);
@@ -198,7 +201,7 @@ export default class PlayScene extends Scene {
         spriteMap.define('koopa-move-left-1', new Vector(201, 206), new Size(16, 24));
         spriteMap.define('koopa-move-left-2', new Vector(182, 206), new Size(16, 24));
         spriteMap.define('koopa-hiding', new Vector(144, 206), new Size(16, 24));
-        spriteMap.define('koopa-wake-up', new Vector(163, 206), new Size(16, 24));
+        spriteMap.define('koopa-waking-up', new Vector(163, 206), new Size(16, 24));
 
         return spriteMap;
       })
@@ -251,7 +254,7 @@ export default class PlayScene extends Scene {
         };
 
         // TODO: fix controller sometimes throws error 'cannot get isPressed of undefined (probably can fixed with promise wait)'
-        this.controller = new Controller(keyBinds, game.config);
+        this.controller = new Controller(keyBinds);
         this.controller.enableLogging();
 
         const mario = new Mario(this.controller, animationMap);
@@ -260,8 +263,10 @@ export default class PlayScene extends Scene {
 
         mario.addComponent(new Jump(mario));
         mario.addComponent(new Falling(mario));
+        mario.addComponent(Direction.right(mario));
         mario.addComponent(new Turbo(mario));
         mario.addComponent(new Stomp(mario));
+        mario.addComponent(new Solid(mario));
         mario.addComponent(new Collisions(mario));
         mario.addComponent(new Intersection(mario));
         mario.addComponent(new Killable(mario, this.entityManager));
@@ -303,9 +308,11 @@ export default class PlayScene extends Scene {
         const goomba = new Goomba(animations);
         goomba.size.setWidth(14).setHeight(16);
         goomba.position.setX(400).setY(200);
+        goomba.velocity.setX(-game.config.enemies.goomba.speed);
 
         goomba.addComponent(new Stompable(goomba));
-        goomba.addComponent(new Walking(goomba));
+        goomba.addComponent(new Solid(goomba));
+        goomba.addComponent(new Walking(goomba, game.config.enemies.goomba.speed));
         goomba.addComponent(new Killable(goomba, this.entityManager));
         goomba.addComponent(new Collisions(goomba));
         goomba.addComponent(new Intersection(goomba));
@@ -331,15 +338,23 @@ export default class PlayScene extends Scene {
           spriteMap.get('koopa-hiding'),
         ]));
 
+        animations.set('wakingUp', new Animation([
+          spriteMap.get('koopa-hiding'),
+          spriteMap.get('koopa-waking-up'),
+        ]));
+
         const koopa = new Koopa(animations);
         koopa.size.setWidth(14).setHeight(16);
         koopa.position.setX(350).setY(200);
 
         koopa.addComponent(new Stompable(koopa));
-        koopa.addComponent(new Walking(koopa));
+        koopa.addComponent(Direction.left(koopa));
+        koopa.addComponent(new Walking(koopa, game.config.enemies.koopa.speed));
+        koopa.addComponent(new Solid(koopa));
         koopa.addComponent(new Killable(koopa, this.entityManager));
         koopa.addComponent(new Collisions(koopa));
         koopa.addComponent(new Intersection(koopa));
+        koopa.setState(new WalkingState(koopa));
 
         this.entityManager.add(koopa);
       });
