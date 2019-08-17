@@ -270,7 +270,7 @@ export default class PlayScene extends Scene {
         mario.addComponent(new Collisions(mario));
         mario.addComponent(new Intersection(mario));
         mario.addComponent(new Killable(mario, this.entityManager));
-        mario.addComponent(new Respawn(mario));
+        mario.addComponent(new Respawn(mario, this.camera));
 
         const mouseController = new MouseController(game.view.context);
 

@@ -51,11 +51,18 @@ export default class Camera {
   }
 
   /**
+   * Focus on the target
+   */
+  focus() {
+    this.position.setX(Math.max(0, this.target.position.x - 100));
+  }
+
+  /**
    * Update the camera
    */
   update() {
     if (Math.abs(this.target.velocity.x) > 1) {
-      this.position.setX(Math.max(0, this.target.position.x - 100));
+      this.focus();
     }
   }
 }
