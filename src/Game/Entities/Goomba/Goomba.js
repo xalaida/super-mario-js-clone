@@ -26,7 +26,7 @@ export default class Goomba extends Entity {
    * @param {Entity} stomper
    */
   onTouch(stomper) {
-    stomper.component('killable').kill();
+    stomper.component('killable').kill(this.entity);
   }
 
   /**
