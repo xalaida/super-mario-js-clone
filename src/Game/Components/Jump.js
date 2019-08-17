@@ -9,6 +9,11 @@ import Component from '../../Engine/Behaviour/Component.js';
  * - Jump when the entity is falling last seconds (not when the entity already stay on the ground)
  */
 export default class Jump extends Component {
+  /**
+   * Jump constructor
+   *
+   * @param {Entity} entity
+   */
   constructor(entity) {
     super('jump', entity);
     /**
@@ -53,9 +58,9 @@ export default class Jump extends Component {
   }
 
   /**
-   * Update jump component
+   * Update the jump component
    *
-   * @param deltaTime
+   * @param {Number} deltaTime
    */
   update(deltaTime) {
     this.handleInput();
@@ -93,7 +98,7 @@ export default class Jump extends Component {
   }
 
   /**
-   * Start jump process
+   * Start the jump process
    */
   start() {
     this.leftTime = this.duration;
@@ -102,7 +107,7 @@ export default class Jump extends Component {
   }
 
   /**
-   * Stop jump process
+   * Stop the jump process
    */
   stop() {
     this.leftTime = 0;
@@ -110,7 +115,7 @@ export default class Jump extends Component {
   }
 
   /**
-   * Reset jump status
+   * Reset the jump status
    */
   reset() {
     this.canRequest = true;
@@ -127,11 +132,11 @@ export default class Jump extends Component {
    * Check entity collisions
    */
   checkCollisions() {
-    if (this.entity.component('collisions').isCollideBottom()) {
+    if (this.entity.component('collisions').getFromBottom()) {
       this.charge();
     }
 
-    if (this.entity.component('collisions').isCollideTop()) {
+    if (this.entity.component('collisions').getFromTop()) {
       this.stop();
     }
   }
