@@ -5,7 +5,7 @@ export default class SpriteTile extends Tile {
    * SpriteTile constructor
    *
    * @param {SpriteImage} image
-   * @param options
+   * @param {Object} options
    */
   constructor(image, options = {}) {
     super();

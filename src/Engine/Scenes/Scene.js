@@ -15,7 +15,7 @@ export default class Scene {
 
   /**
    * Update game scene every tick
-   * Used for calculation all entities behaviour, etc.
+   * Used for calculation all entities behaviour, system updates, etc.
    */
   update() {
     console.log(`Override the default update() scene ${this.constructor.name} method.`);
@@ -23,7 +23,7 @@ export default class Scene {
 
   /**
    * Render game scene.
-   * Used for rendering all game to canvas
+   * Used for rendering the game state to the context
    */
   render() {
     console.log(`Override the default render() scene ${this.constructor.name} method.`);

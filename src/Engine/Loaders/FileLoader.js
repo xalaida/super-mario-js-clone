@@ -1,4 +1,10 @@
-export default class LevelLoader {
+export default class FileLoader {
+  /**
+   * Load a file by url
+   *
+   * @param {String} url
+   * @returns {Promise<String>}
+   */
   static load(url) {
     return new Promise((resolve, reject) => {
       const rawFile = new XMLHttpRequest();

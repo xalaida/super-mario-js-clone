@@ -4,8 +4,8 @@ export default class AnimatedTile extends Tile {
   /**
    * AnimatedTile constructor
    *
-   * @param animation
-   * @param options
+   * @param {Animation} animation
+   * @param {Object} options
    */
   constructor(animation, options = {}) {
     super();
@@ -16,8 +16,8 @@ export default class AnimatedTile extends Tile {
   /**
    * Render the animated tile
    *
-   * @param view
-   * @param camera
+   * @param {View} view
+   * @param {Camera} camera
    */
   render(view, camera) {
     view.spriteImage(this.animation.frame, camera.getProjection(this.position), this.size);

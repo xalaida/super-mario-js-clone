@@ -1,17 +1,17 @@
 export default class View {
   /**
-   * Create a view for game rendering control
+   * View constructor
    * TODO: remove all floor methods from vector
    * TODO: pass from outside prepared vector with .floor() method
    *
-   * @param context
+   * @param {CanvasRenderingContext2D} context
    */
   constructor(context) {
     this.context = context;
   }
 
   /**
-   * Clear view context
+   * Clear the view context
    */
   clear() {
     this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
@@ -19,6 +19,8 @@ export default class View {
 
   /**
    * Fill the view context with color
+   *
+   * @param {String} color
    */
   fill(color) {
     this.context.save();
@@ -60,9 +62,9 @@ export default class View {
   /**
    * Draw a box outline
    *
-   * @param position
-   * @param size
-   * @param color
+   * @param {Vector} position
+   * @param {Size} size
+   * @param {String} color
    */
   outline(position, size, color = 'green') {
     this.context.save();

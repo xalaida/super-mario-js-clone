@@ -1,6 +1,11 @@
 import Component from '../Component.js';
 
 export default class Collisions extends Component {
+  /**
+   * Collisions constructor
+   *
+   * @param {Entity} entity
+   */
   constructor(entity) {
     super('collisions', entity);
     this.init();
@@ -48,6 +53,8 @@ export default class Collisions extends Component {
 
   /**
    * Determine if top side has a collision
+   *
+   * @returns {Boolean}
    */
   isCollideTop() {
     return this.state.top;
@@ -55,6 +62,8 @@ export default class Collisions extends Component {
 
   /**
    * Determine if right side has a collision
+   *
+   * @returns {Boolean}
    */
   isCollideRight() {
     return this.state.right;
@@ -62,14 +71,18 @@ export default class Collisions extends Component {
 
   /**
    * Determine if bottom side has a collision
+   *
+   * @returns {Boolean}
    */
   isCollideBottom() {
     return this.state.bottom;
   }
 
   /**
-   * TODO: rename the function with correct spelling (steal from another engines)
    * Determine if left side has a collision
+   * TODO: rename the function with correct spelling (steal from another engines)
+   *
+   * @returns {Boolean}
    */
   isCollideLeft() {
     return this.state.left;

@@ -1,6 +1,6 @@
 export default class CanvasFactory {
   /**
-   * Create canvas for game rendering
+   * Create a canvas for game rendering
    *
    * @param width
    * @param height

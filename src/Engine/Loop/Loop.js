@@ -2,8 +2,8 @@ export default class Loop {
   /**
    * For 60 fps - it's 60 frames / 1000 ms and it is 1 frame / 16.666 ms
    *
-   * @param game
-   * @param fps
+   * @param {Game} game
+   * @param {Number} fps
    */
   constructor(game, fps = 60) {
     this.game = game;
@@ -23,7 +23,7 @@ export default class Loop {
   /**
    * Game loop function
    *
-   * @param timestamp
+   * @param {Number} timestamp
    */
   loop(timestamp) {
     const deltaTime = this.calculateDeltaTime(timestamp);
@@ -32,7 +32,6 @@ export default class Loop {
 
     while (this.accumulation > this.frameStep) {
       this.game.update(this.getDeltaTimeInSeconds());
-
       this.accumulation -= this.frameStep;
     }
 
@@ -46,8 +45,8 @@ export default class Loop {
    * Allows to make a fps-independent game
    * Min 1000 is used for Chrome Dead Tabs fix (not active tabs)
    *
-   * @param timestamp
-   * @returns {number}
+   * @param {Number} timestamp
+   * @returns {Number}
    */
   calculateDeltaTime(timestamp) {
     return Math.min(1000, timestamp - this.previousTimestamp);
@@ -58,7 +57,7 @@ export default class Loop {
    * Can be used in update function for a fps independent the game experience:
    * this.position = this.position + (this.velocity * delta)
    *
-   * @returns {number}
+   * @returns {Number}
    */
   getDeltaTimeInSeconds() {
     return this.accumulation / 1000;
@@ -69,7 +68,7 @@ export default class Loop {
    * Can be used inside render function this for smooth render:
    * let drawPosition = this.lastPosition + ((this.position - this.lastPosition) * interpolation)
    *
-   * @returns {number}
+   * @returns {Number}
    */
   getInterpolation() {
     return this.accumulation / this.frameStep;

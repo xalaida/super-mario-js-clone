@@ -68,7 +68,7 @@ export default class Bounds {
    * Determine if bounds are intersected
    *
    * @param {Bounds} bounds
-   * @returns {boolean}
+   * @returns {Boolean}
    */
   intersects(bounds) {
     return this.left < bounds.right

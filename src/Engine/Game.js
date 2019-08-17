@@ -7,7 +7,7 @@ export default class Game {
   /**
    * Create game with all dependencies
    *
-   * @param config
+   * @param {Config} config
    * @param {View} view
    */
   constructor(config, view) {

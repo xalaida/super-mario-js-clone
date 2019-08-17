@@ -1,4 +1,9 @@
 export default class Config {
+  /**
+   * Config constructor
+   *
+   * @param {Object} options
+   */
   constructor(options = {}) {
     this.fps = 60;
     this.showFps = false;
@@ -15,6 +20,11 @@ export default class Config {
     this.merge(options);
   }
 
+  /**
+   * Merge config options
+   *
+   * @param {Object} options
+   */
   merge(options) {
     Object.keys(options).forEach((key) => {
       this[key] = options[key];

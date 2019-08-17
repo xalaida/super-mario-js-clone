@@ -1,6 +1,11 @@
 import Vector from '../Math/Vector.js';
 
 export default class Controller {
+  /**
+   * Controller constructor
+   *
+   * @param {Object} keyBinds
+   */
   constructor(keyBinds) {
     this.keyBinds = Object.assign(Controller.defaultControls(), keyBinds);
     this.keys = new Map();
@@ -9,10 +14,11 @@ export default class Controller {
     this.listenEvents();
   }
 
-  enableLogging() {
-    this.logging = true;
-  }
-
+  /**
+   * Get default key bindings
+   *
+   * @returns {Object}
+   */
   static defaultControls() {
     return {
       ArrowLeft: 'left',
@@ -20,6 +26,13 @@ export default class Controller {
       ArrowRight: 'right',
       ArrowDown: 'down',
     };
+  }
+
+  /**
+   * Enable the controller logging
+   */
+  enableLogging() {
+    this.logging = true;
   }
 
   init() {
@@ -32,19 +45,40 @@ export default class Controller {
     });
   }
 
+  /**
+   * Listen to key events
+   *
+   * @param context
+   */
   listenEvents(context = null) {
     (context || window).addEventListener('keydown', this.handleKeyDownEvent.bind(this));
     (context || window).addEventListener('keyup', this.handleKeyUpEvent.bind(this));
   }
 
+  /**
+   * Handle the key up controller event
+   *
+   * @param {KeyboardEvent} event
+   */
   handleKeyUpEvent(event) {
     this.handleKeyEvent(event, false);
   }
 
+  /**
+   * Handle the key down controller event
+   *
+   * @param {KeyboardEvent} event
+   */
   handleKeyDownEvent(event) {
     this.handleKeyEvent(event, true);
   }
 
+  /**
+   * Handle a key controller event
+   *
+   * @param {KeyboardEvent} event
+   * @param {Boolean} state
+   */
   handleKeyEvent(event, state) {
     if (this.logging) {
       console.log(`Pressed the key: ${event.key}`);
@@ -59,8 +93,14 @@ export default class Controller {
     this.state.set(this.keys.get(event.key), state);
   }
 
+  /**
+   * Determine if the key is pressed
+   *
+   * @param {String} id
+   * @returns {Boolean}
+   */
   isPressed(id) {
-    return this.state.get(id);
+    return !!this.state.get(id);
   }
 
   /**

@@ -5,7 +5,7 @@ export default class TileMap {
   /**
    * TileMap constructor
    *
-   * @param config
+   * @param {Config} config
    * @param {Size} tileSize
    */
   constructor(config, tileSize) {
@@ -134,7 +134,7 @@ export default class TileMap {
     this.findInBounds(camera.getBounds())
       .forEach((tile) => {
         // TODO: extract all colors into the config
-        view.outline(tile.position.minus(camera.position), tile.size, 'green');
+        view.outline(camera.getProjection(tile.position), tile.size, 'green');
       });
   }
 }
