@@ -6,11 +6,16 @@ export default class TileCollider {
    */
   constructor(tileMap) {
     this.tileMap = tileMap;
-    this.checkableTile = [];
-    this.colladableTiles = [];
+    this.initDebugProperties();
   }
 
-  // TODO: extract all entity updating outside (use only collisions component with collideTop(), collideBottom(), etc. )
+  /**
+   * Init debug properties for the collider
+   */
+  initDebugProperties() {
+    this.tilesInBounds = [];
+    this.tilesCollided = [];
+  }
 
   /**
    * Check horizontal entity collisions
@@ -18,16 +23,14 @@ export default class TileCollider {
    * @param {Entity} entity
    */
   checkX(entity) {
-    const tiles = this.tileMap.findInBounds(entity.getBounds());
-    this.checkableTile.push(...tiles);
+    this.tileMap.findInBounds(entity.getBounds())
+      .forEach((tile) => {
+        if (tile.options.solid) {
+          this.checkCollisionX(entity, tile);
+        }
 
-    tiles.forEach((tile) => {
-      if (!tile.options.ground) {
-        return;
-      }
-
-      this.checkCollisionX(entity, tile);
-    });
+        this.tilesInBounds.push(tile);
+      });
   }
 
   /**
@@ -36,16 +39,14 @@ export default class TileCollider {
    * @param {Entity} entity
    */
   checkY(entity) {
-    const tiles = this.tileMap.findInBounds(entity.getBounds());
-    this.checkableTile.push(...tiles);
+    this.tileMap.findInBounds(entity.getBounds())
+      .forEach((tile) => {
+        if (tile.options.solid) {
+          this.checkCollisionY(entity, tile);
+        }
 
-    tiles.forEach((tile) => {
-      if (!tile.options.ground) {
-        return;
-      }
-
-      this.checkCollisionY(entity, tile);
-    });
+        this.tilesInBounds.push(tile);
+      });
   }
 
   /**
@@ -56,11 +57,11 @@ export default class TileCollider {
    */
   checkCollisionX(entity, tile) {
     if (entity.velocity.x > 0) {
-      this.checkToRight(entity, tile);
+      this.checkFromRight(entity, tile);
     }
 
     if (entity.velocity.x < 0) {
-      this.checkToLeft(entity, tile);
+      this.checkFromLeft(entity, tile);
     }
   }
 
@@ -72,81 +73,84 @@ export default class TileCollider {
    */
   checkCollisionY(entity, tile) {
     if (entity.velocity.y > 0) {
-      this.checkToBottom(entity, tile);
+      this.checkFromBottom(entity, tile);
     }
 
     if (entity.velocity.y < 0) {
-      this.checkToTop(entity, tile);
+      this.checkFromTop(entity, tile);
     }
   }
 
   /**
-   * Check entity collision from the right side with the tile
+   * Check the entity collision from the right side with the tile
    *
    * @param {Entity} entity
    * @param {Tile} tile
    */
-  checkToRight(entity, tile) {
+  checkFromRight(entity, tile) {
     if (entity.getBounds().right > tile.getBounds().left) {
-      entity.position.setX(tile.position.x - entity.size.width);
-      entity.velocity.setX(0);
-      entity.component('collisions').collideRight();
-      this.colladableTiles.push(tile);
+      entity.component('collisions').setFromRight(tile);
+
+      if (entity.hasComponent('solid')) {
+        entity.component('solid').onRightCollision(tile);
+      }
+
+      this.tilesCollided.push(tile);
     }
   }
 
   /**
-   * Check entity collision from the left side with the tile
+   * Check the entity collision from the left side with the tile
    *
    * @param {Entity} entity
    * @param {Tile} tile
    */
-  checkToLeft(entity, tile) {
+  checkFromLeft(entity, tile) {
     if (entity.getBounds().left < tile.getBounds().right) {
-      entity.position.setX(tile.getBounds().right);
-      entity.velocity.setX(0);
-      entity.component('collisions').collideLeft();
-      this.colladableTiles.push(tile);
+      entity.component('collisions').setFromLeft(tile);
+
+      if (entity.hasComponent('solid')) {
+        entity.component('solid').onLeftCollision(tile);
+      }
+
+      this.tilesCollided.push(tile);
     }
   }
 
   /**
-   * Check entity collision from the top side with the tile
+   * Check the entity collision from the top side with the tile
    *
    * @param {Entity} entity
    * @param {Tile} tile
    */
-  checkToTop(entity, tile) {
+  checkFromTop(entity, tile) {
     if (entity.getBounds().top < tile.getBounds().bottom) {
-      entity.position.setY(tile.getBounds().bottom);
-      entity.velocity.setY(0);
-      entity.component('collisions').collideTop();
-      this.colladableTiles.push(tile);
+      entity.component('collisions').setFromTop(tile);
+
+      if (entity.hasComponent('solid')) {
+        entity.component('solid').onTopCollision(tile);
+      }
+
+      this.tilesCollided.push(tile);
     }
   }
 
   /**
-   * Check entity collision from the bottom side with the tile
+   * Check the entity collision from the bottom side with the tile
    *
    * @param {Entity} entity
    * @param {Tile} tile
    */
-  checkToBottom(entity, tile) {
+  checkFromBottom(entity, tile) {
     if (entity.getBounds().bottom > tile.getBounds().top) {
-      entity.position.setY(tile.position.y - entity.size.height);
-      entity.velocity.setY(0);
-      entity.component('collisions').collideBottom();
-      this.colladableTiles.push(tile);
-    }
-  }
+      entity.component('collisions').setFromBottom(tile);
 
-  /**
-   * Reset debuggable tiles
-   * TODO: refactor this
-   */
-  reset() {
-    this.colladableTiles = [];
-    this.checkableTile = [];
+      if (entity.hasComponent('solid')) {
+        entity.component('solid').onBottomCollision(tile);
+      }
+
+      this.tilesCollided.push(tile);
+    }
   }
 
   /**
@@ -156,14 +160,22 @@ export default class TileCollider {
    * @param {Camera} camera
    */
   debug(view, camera) {
-    this.checkableTile.forEach((tile) => {
+    this.tilesInBounds.forEach((tile) => {
       view.outline(camera.getProjection(tile.position), tile.size, 'red');
     });
 
-    this.colladableTiles.forEach((tile) => {
+    this.tilesCollided.forEach((tile) => {
       view.outline(camera.getProjection(tile.position), tile.size, 'yellow');
     });
 
     this.reset();
+  }
+
+  /**
+   * Reset debuggable tiles
+   */
+  reset() {
+    this.tilesCollided = [];
+    this.tilesInBounds = [];
   }
 }
