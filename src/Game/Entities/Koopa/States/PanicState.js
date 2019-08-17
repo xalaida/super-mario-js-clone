@@ -11,6 +11,7 @@ export default class PanicState extends State {
    * @param {Number} speed
    */
   constructor(entity, speed = 200) {
+    // TODO: add possibility to kill another entities when panic
     super(entity);
     this.speed = speed;
     this.init(speed);

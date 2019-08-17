@@ -14,11 +14,6 @@ export default class Koopa extends Entity {
     this.drawBox = new Size(16, 24);
     this.offset = new Vector(1, 8);
     this.animationPlayer = new AnimationPlayer(animations);
-
-    // TODO: fix panic init direction (base on difference between stopper.position.x and entity.position.x)
-    // TODO: add wakeUp animation to hiding state
-    // TODO: fix bouncing on hiding stomping entity
-    // TODO: add possibility to kill another entities when panic
   }
 
   /**
