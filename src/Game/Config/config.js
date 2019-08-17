@@ -19,6 +19,15 @@ const config = new Config({
     turboMaxSpeed: 120,
     turboAcceleration: 120,
   },
+  enemies: {
+    goomba: {
+      speed: 20,
+    },
+    koopa: {
+      speed: 20,
+      panicSpeed: 200,
+    },
+  },
   components: {
     jump: {
       power: 150,
