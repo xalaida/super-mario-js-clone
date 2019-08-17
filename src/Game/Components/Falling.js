@@ -1,6 +1,11 @@
 import Component from '../../Engine/Behaviour/Component.js';
 
 export default class Falling extends Component {
+  /**
+   * Falling constructor
+   *
+   * @param {Entity} entity
+   */
   constructor(entity) {
     super('falling', entity);
     this.state = false;
@@ -10,24 +15,24 @@ export default class Falling extends Component {
    * Update the falling component
    */
   update() {
-    this.setState();
+    this.setFromVelocity();
     this.checkCollisions();
   }
 
   /**
-   * Set falling state
+   * Set the falling state
    */
-  setState() {
+  setFromVelocity() {
     if (this.entity.velocity.y > 0) {
       this.state = true;
     }
   }
 
   /**
-   * Check the entity collisions
+   * Check entity collisions
    */
   checkCollisions() {
-    if (this.entity.component('collisions').isCollideBottom()) {
+    if (this.entity.component('collisions').getFromBottom()) {
       this.state = false;
     }
   }
