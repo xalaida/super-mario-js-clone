@@ -13,10 +13,10 @@ import Controller from '../../Engine/Input/Controller.js';
 import Mario from '../Entities/Mario/Mario.js';
 import TileCollider from '../../Engine/Tiles/TileCollider.js';
 import MouseController from '../../Engine/Input/MouseController.js';
-import Jump from '../Components/Jump.js';
+import Jump from '../Entities/Mario/Components/Jump.js';
 import Collisions from '../../Engine/Behaviour/Components/Collisions.js';
-import Falling from '../Components/Falling.js';
-import Turbo from '../Components/Turbo.js';
+import Falling from '../Entities/Mario/Components/Falling.js';
+import Turbo from '../Entities/Mario/Components/Turbo.js';
 import AnimationManager from '../../Engine/Graphic/Animations/AnimationManager.js';
 import BackgroundLayer from '../Layers/BackgroundLayer.js';
 import SkyLayer from '../Layers/SkyLayer.js';
@@ -27,7 +27,7 @@ import Stompable from '../Components/Stompable.js';
 import Walking from '../Components/Walking.js';
 import Koopa from '../Entities/Koopa/Koopa.js';
 import Intersection from '../../Engine/Behaviour/Components/Intersection.js';
-import Stomp from '../Entities/Mario/Components/Stomp.js';
+import Stomper from '../Entities/Mario/Components/Stomper.js';
 import Killable from '../Components/Killable.js';
 import Respawn from '../Entities/Mario/Components/Respawn.js';
 import EntityManager from '../../Engine/Behaviour/EntityManager.js';
@@ -35,16 +35,22 @@ import WalkingState from '../Entities/Koopa/States/WalkingState.js';
 import Solid from '../../Engine/Behaviour/Components/Solid.js';
 import Direction from '../Components/Direction.js';
 import Movement from '../Entities/Mario/Components/Movement.js';
+import GravitySystem from '../Systems/GravitySystem.js';
+import CollisionSystem from '../Systems/CollisionSystem.js';
+import EntitiesSystem from '../Systems/EntitiesSystem.js';
+import IntersectionSystem from '../Systems/IntersectionSystem.js';
 
 export default class PlayScene extends Scene {
   constructor() {
     super();
+    // TODO: remove unused props and left them only inside the layers / systems
     this.camera = new Camera(Vector.zero(), new Size(500, 400));
     this.tileCollider = null;
     this.gravity = new Vector(0, game.config.physics.gravity);
     this.animationManager = null;
-    this.layers = new Map();
     this.entityManager = new EntityManager();
+    this.layers = new Map();
+    this.systems = new Map();
 
     // TODO: add friction and gravity processors into one single place
   }
@@ -54,7 +60,8 @@ export default class PlayScene extends Scene {
       this.loadTiles(),
       this.loadEntities(),
     ])
-      .then(() => this.loadDebug());
+      .then(() => this.loadDebug())
+      .then(() => this.loadSystems());
   }
 
   loadTiles() {
@@ -262,12 +269,12 @@ export default class PlayScene extends Scene {
         mario.size.setWidth(14).setHeight(16);
         mario.position.setX(100).setY(200);
 
+        mario.addComponent(new Falling(mario));
         mario.addComponent(new Jump(mario));
         mario.addComponent(new Movement(mario));
-        mario.addComponent(new Falling(mario));
         mario.addComponent(Direction.right(mario));
         mario.addComponent(new Turbo(mario));
-        mario.addComponent(new Stomp(mario));
+        mario.addComponent(new Stomper(mario));
         mario.addComponent(new Solid(mario));
         mario.addComponent(new Collisions(mario));
         mario.addComponent(new Intersection(mario));
@@ -349,13 +356,14 @@ export default class PlayScene extends Scene {
         koopa.size.setWidth(14).setHeight(16);
         koopa.position.setX(350).setY(200);
 
-        koopa.addComponent(new Stompable(koopa));
         koopa.addComponent(Direction.left(koopa));
         koopa.addComponent(new Walking(koopa, game.config.enemies.koopa.speed));
         koopa.addComponent(new Solid(koopa));
         koopa.addComponent(new Killable(koopa, this.entityManager));
+        koopa.addComponent(new Stompable(koopa));
         koopa.addComponent(new Collisions(koopa));
         koopa.addComponent(new Intersection(koopa));
+
         koopa.setState(new WalkingState(koopa));
 
         this.entityManager.add(koopa);
@@ -371,30 +379,17 @@ export default class PlayScene extends Scene {
     }
   }
 
+  loadSystems() {
+    this.systems.set('intersection', new IntersectionSystem(this.entityManager));
+    this.systems.set('entities', new EntitiesSystem(this.entityManager));
+    this.systems.set('gravity', new GravitySystem(this.entityManager));
+    this.systems.set('collision', new CollisionSystem(this.entityManager, this.tileCollider));
+    this.systems.set('animation', this.animationManager);
+    this.systems.set('camera', this.camera);
+  }
+
   update(deltaTime) {
-    this.animationManager.updateAll();
-
-    this.entityManager.getEntities().forEach((entity) => {
-      entity.update(deltaTime);
-
-      entity.velocity.set(
-        entity.velocity.plus(this.gravity.scale(deltaTime)),
-      );
-
-      entity.position.set(
-        entity.position.plusX(entity.velocity.scale(deltaTime)),
-      );
-      this.tileCollider.checkX(entity);
-
-      entity.position.set(
-        entity.position.plusY(entity.velocity.scale(deltaTime)),
-      );
-      this.tileCollider.checkY(entity);
-    });
-
-    this.entityManager.checkIntersections();
-
-    this.camera.update();
+    this.systems.forEach(system => system.update(deltaTime));
   }
 
   render(view) {
