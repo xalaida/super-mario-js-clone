@@ -4,7 +4,7 @@ export default class SpriteMap {
   /**
    * SpriteMap constructor
    *
-   * @param {String} source
+   * @param {Image} source
    */
   constructor(source) {
     this.source = source;
@@ -26,6 +26,7 @@ export default class SpriteMap {
    * Get a defined sprite image
    *
    * @param {String} name
+   * @returns {Image}
    */
   get(name) {
     return this.definitions.get(name);
