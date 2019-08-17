@@ -22,8 +22,7 @@ export default class Stompable extends Component {
     }
 
     if (stomper.component('falling').state) {
-      stomper.position.setY(this.entity.getBounds().top - stomper.size.height);
-      stomper.component('stomp').bounce();
+      stomper.component('stomp').bounce(this.entity);
       this.entity.onStomp(stomper);
     } else {
       this.entity.onTouch(stomper);
