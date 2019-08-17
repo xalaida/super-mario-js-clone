@@ -7,6 +7,7 @@ NEXT STEPS (refactoring):
 ~~- add second layer with clouds and bushes (add them to another tilemap)~~
 ~~- add third layer with all collisions tilemap and collider (dynamic layer which can be updated)~~
 ~~- add debug layer which can render all debug info such as tilemap grid, hitboxes, collisions, keyboard statuses, etc.~~
+~~- refactor all update process with the systems~~
 - extract all if-statements outside of update() render() functions if they are static
 - check all config variables and refactor the Config class with override() method and kind of deepMerging feature
 - extract objects generation outside of update() render() functions if they are static (width, vectors, etc)
@@ -19,6 +20,7 @@ NEXT STEPS (refactoring):
 - think about replacing all promises with async / await calls
 - use object/array destruction with json spec parsing
 - swap console.log alerts on super classes with throwing an errors
+- refactor all references from the component or entity to game scene methods with EventBus pattern 
 
 TODO:
 - add render buffer for static objects (tiles, backgrounds, etc)
