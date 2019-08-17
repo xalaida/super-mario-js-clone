@@ -1,4 +1,3 @@
-import Vector from '../../../Engine/Math/Vector.js';
 import AnimationPlayer from '../../../Engine/Graphic/Animations/AnimationPlayer.js';
 import Entity from '../../../Engine/Behaviour/Entity.js';
 
@@ -10,7 +9,6 @@ export default class Goomba extends Entity {
    */
   constructor(animationsMap) {
     super();
-    this.velocity = new Vector(-20, 0);
     this.animationPlayer = new AnimationPlayer(animationsMap);
   }
 

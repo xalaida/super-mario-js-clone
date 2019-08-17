@@ -11,6 +11,7 @@ export default class Entity {
     this.id = Symbol('id');
     this.size = Size.pixel();
     this.position = Vector.zero();
+    this.velocity = Vector.zero();
   }
 
   /**

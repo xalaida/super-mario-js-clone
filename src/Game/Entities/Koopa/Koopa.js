@@ -2,7 +2,6 @@ import Vector from '../../../Engine/Math/Vector.js';
 import Size from '../../../Engine/Math/Size.js';
 import AnimationPlayer from '../../../Engine/Graphic/Animations/AnimationPlayer.js';
 import Entity from '../../../Engine/Behaviour/Entity.js';
-import WalkingState from './States/WalkingState.js';
 
 export default class Koopa extends Entity {
   /**
@@ -12,11 +11,14 @@ export default class Koopa extends Entity {
    */
   constructor(animations) {
     super();
-    this.velocity = new Vector(-20, 0);
     this.drawBox = new Size(16, 24);
     this.offset = new Vector(1, 8);
     this.animationPlayer = new AnimationPlayer(animations);
-    this.state = new WalkingState(this);
+
+    // TODO: fix panic init direction (base on difference between stopper.position.x and entity.position.x)
+    // TODO: add wakeUp animation to hiding state
+    // TODO: fix bouncing on hiding stomping entity
+    // TODO: add possibility to kill another entities when panic
   }
 
   /**
@@ -52,8 +54,8 @@ export default class Koopa extends Entity {
    * @param {Number} deltaTime
    */
   update(deltaTime) {
-    this.state.update(deltaTime);
     super.update(deltaTime);
+    this.state.update(deltaTime);
   }
 
   /**
