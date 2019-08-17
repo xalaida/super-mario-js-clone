@@ -29,7 +29,7 @@ export default class AnimationManager {
   /**
    * Update all animations
    */
-  updateAll() {
+  update() {
     this.animations.forEach((animation) => {
       animation.update();
     });
