@@ -7,17 +7,20 @@ export default class WalkingState extends State {
    * WalkingState constructor
    *
    * @param {Koopa} entity
+   * @param {Number} speed
    */
-  constructor(entity) {
+  constructor(entity, speed = 20) {
     super(entity);
+    this.speed = speed;
     this.init();
   }
 
   /**
-   * Init the state
+   * Init the walking state
    */
   init() {
-    this.entity.velocity.setX(-20);
+    this.entity.velocity.setX(this.speed * this.entity.component('direction').toSign());
+    this.entity.component('walking').setSpeed(this.speed);
   }
 
   /**
@@ -30,7 +33,7 @@ export default class WalkingState extends State {
   /**
    * On touch handler
    *
-   * @param stomper
+   * @param {Entity} stomper
    */
   onTouch(stomper) {
     stomper.component('killable').kill(this.entity);
