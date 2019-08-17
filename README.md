@@ -1,7 +1,7 @@
 Super Mario Bros. JS clone
 
 NEXT STEPS (refactoring):
-- add doc blocks to all classes to enable a type hinting ide support
+~~- add doc blocks to all classes to enable a type hinting ide support~~
 - feature full 1-1 lvl with all mapped blocks
 ~~- add background layer with should be rendered as first layer (render simple canvas sky color background rect)~~
 ~~- add second layer with clouds and bushes (add them to another tilemap)~~
@@ -18,9 +18,7 @@ NEXT STEPS (refactoring):
 - double check all config parameters usage & core parameters should be placed inside the engine
 - think about replacing all promises with async / await calls
 - use object/array destruction with json spec parsing
-
-NEXT STEPS (features):
-- enemies
+- swap console.log alerts on super classes with throwing an errors
 
 TODO:
 - add render buffer for static objects (tiles, backgrounds, etc)
