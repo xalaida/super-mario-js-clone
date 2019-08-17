@@ -1,4 +1,5 @@
 /* eslint-disable import/no-cycle */
+
 import State from './State.js';
 import HidingState from './HidingState.js';
 

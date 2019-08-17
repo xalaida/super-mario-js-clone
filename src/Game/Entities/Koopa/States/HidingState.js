@@ -14,34 +14,63 @@ export default class HidingState extends State {
     super(entity);
     this.hideDuration = 5;
     this.hideTime = 0;
+    this.wakeUpDelay = 3;
     this.init();
   }
 
+  /**
+   * Init the hiding state
+   */
   init() {
-    // TODO: add possibility to turn off stomping on hiding state (should be just activated the PanicState with no bounce at Stomper)
+    this.entity.component('direction').setFromVelocity();
     this.entity.velocity.setX(0);
   }
 
+  /**
+   * Update the hiding state
+   *
+   * @param {Number} deltaTime
+   */
   update(deltaTime) {
     this.hideTime += deltaTime;
 
     if (this.hideTime > this.hideDuration) {
-      this.entity.setState(new WalkingState(this.entity));
+      this.entity.setState(new WalkingState(this.entity, game.config.enemies.koopa.speed));
     }
   }
 
   /**
    * On stomp handler
+   *
+   * @param {Entity} stomper
    */
-  onStomp() {
-    this.entity.velocity.setX(0);
+  onStomp(stomper) {
+    // TODO: disable bounce effect on this state (which called in the Stomp component)
+    this.panic(stomper);
   }
 
   /**
    * On touch handler
+   *
+   * @param {Entity} stomper
    */
-  onTouch() {
-    this.entity.setState(new PanicState(this.entity));
+  onTouch(stomper) {
+    this.panic(stomper);
+  }
+
+  /**
+   * Set the PanicState
+   *
+   * @param {Entity} stomper
+   */
+  panic(stomper) {
+    if (stomper.position.x > this.entity.position.x) {
+      this.entity.component('direction').turnLeft();
+    } else {
+      this.entity.component('direction').turnRight();
+    }
+
+    this.entity.setState(new PanicState(this.entity, game.config.enemies.koopa.panicSpeed));
   }
 
   /**
@@ -50,6 +79,10 @@ export default class HidingState extends State {
    * @returns {SpriteImage}
    */
   getAnimationFrame() {
+    if (this.hideTime > this.wakeUpDelay) {
+      return this.entity.animationPlayer.play('wakingUp');
+    }
+
     return this.entity.animationPlayer.play('hiding');
   }
 }

@@ -1,7 +1,6 @@
 /* eslint-disable import/no-cycle */
 
 import State from './State.js';
-import Vector from '../../../../Engine/Math/Vector.js';
 import HidingState from './HidingState.js';
 
 export default class PanicState extends State {
@@ -9,20 +8,20 @@ export default class PanicState extends State {
    * PanicState constructor
    *
    * @param {Koopa} entity
+   * @param {Number} speed
    */
-  constructor(entity) {
+  constructor(entity, speed = 200) {
     super(entity);
-    this.init();
+    this.speed = speed;
+    this.init(speed);
   }
 
   /**
-   * Init the state
-   * TODO: try to refactor with no duplication
-   * probably just use flipX() method inside a Walking component
+   * Init the panic state
    */
   init() {
-    this.entity.velocity.set(new Vector(-200, 0));
-    this.entity.component('walking').setSpeed(200);
+    this.entity.velocity.setX(this.speed * this.entity.component('direction').toSign());
+    this.entity.component('walking').setSpeed(this.speed);
   }
 
   /**
@@ -38,7 +37,7 @@ export default class PanicState extends State {
    * @param stomper
    */
   onTouch(stomper) {
-    stomper.component('killable').kill();
+    stomper.component('killable').kill(this.entity);
   }
 
   /**

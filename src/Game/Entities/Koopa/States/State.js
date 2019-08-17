@@ -13,9 +13,7 @@ export default class State {
   /**
    * Update the state
    */
-  update() {
-    // State update function
-  }
+  update() {}
 
   /**
    * On stomp handler
