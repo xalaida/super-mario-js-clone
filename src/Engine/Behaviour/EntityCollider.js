@@ -20,7 +20,6 @@ export default class EntityCollider {
       }
 
       if (e.getBounds().intersects(entity.getBounds())) {
-        e.component('intersection').setIntersection(entity);
         entity.component('intersection').setIntersection(e);
       }
     });
