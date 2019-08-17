@@ -4,11 +4,12 @@ export default class Walking extends Component {
   /**
    * Walking constructor
    *
-   * @param entity
+   * @param {Entity} entity
+   * @param {Number} speed
    */
-  constructor(entity) {
+  constructor(entity, speed = 20) {
     super('walking', entity);
-    this.speed = 20;
+    this.speed = speed;
   }
 
   /**
@@ -24,11 +25,11 @@ export default class Walking extends Component {
    * Update the walking component
    */
   update() {
-    if (this.entity.component('collisions').isCollideLeft()) {
+    if (this.entity.component('collisions').getFromLeft()) {
       this.entity.velocity.setX(this.speed);
     }
 
-    if (this.entity.component('collisions').isCollideRight()) {
+    if (this.entity.component('collisions').getFromRight()) {
       this.entity.velocity.setX(-this.speed);
     }
   }
