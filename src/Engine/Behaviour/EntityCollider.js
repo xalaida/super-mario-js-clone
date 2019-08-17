@@ -20,8 +20,8 @@ export default class EntityCollider {
       }
 
       if (e.getBounds().intersects(entity.getBounds())) {
-        e.component('intersection').intersects(entity);
-        entity.component('intersection').intersects(e);
+        e.component('intersection').setIntersection(entity);
+        entity.component('intersection').setIntersection(e);
       }
     });
   }

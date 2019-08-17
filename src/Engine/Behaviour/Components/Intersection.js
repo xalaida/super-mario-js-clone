@@ -16,7 +16,7 @@ export default class Intersection extends Component {
    *
    * @param {Entity} entity
    */
-  intersects(entity) {
+  setIntersection(entity) {
     this.entity = entity;
   }
 
