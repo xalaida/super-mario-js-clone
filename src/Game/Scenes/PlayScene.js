@@ -383,12 +383,11 @@ export default class PlayScene extends Scene {
   }
 
   loadSystems() {
-    this.systems.set('entities', new EntitiesSystem(this.entityManager));
-    this.systems.set('gravity', new GravitySystem(this.entityManager));
+    this.systems.set('entities', new EntitiesSystem(this.entityManager.getEntities()));
+    this.systems.set('gravity', new GravitySystem(this.entityManager.getEntities()));
     this.systems.set('friction', new FrictionSystem([this.mario]));
     this.systems.set('intersection', new IntersectionSystem(this.entityManager));
-    // TODO: add FrictionSystem
-    this.systems.set('collision', new CollisionSystem(this.entityManager, this.tileCollider));
+    this.systems.set('collision', new CollisionSystem(this.entityManager.getEntities(), this.tileCollider));
     this.systems.set('animation', this.animationManager);
     this.systems.set('camera', this.camera);
   }

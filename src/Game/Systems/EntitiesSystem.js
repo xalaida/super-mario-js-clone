@@ -2,10 +2,10 @@ export default class EntitiesSystem {
   /**
    * EntitiesSystem constructor
    *
-   * @param {EntityManager} entityManager
+   * @param {Array|Map} entities
    */
-  constructor(entityManager) {
-    this.entityManager = entityManager;
+  constructor(entities) {
+    this.entities = entities;
   }
 
   /**
@@ -14,7 +14,7 @@ export default class EntitiesSystem {
    * @param {Number} deltaTime
    */
   update(deltaTime) {
-    this.entityManager.getEntities().forEach((entity) => {
+    this.entities.forEach((entity) => {
       entity.update(deltaTime);
     });
   }

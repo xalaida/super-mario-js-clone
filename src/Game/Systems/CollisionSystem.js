@@ -2,11 +2,11 @@ export default class CollisionSystem {
   /**
    * CollisionSystem constructor
    *
-   * @param {EntityManager} entityManager
+   * @param {Array|Map} entities
    * @param {TileCollider} tileCollider
    */
-  constructor(entityManager, tileCollider) {
-    this.entityManager = entityManager;
+  constructor(entities, tileCollider) {
+    this.entities = entities;
     this.tileCollider = tileCollider;
   }
 
@@ -16,7 +16,7 @@ export default class CollisionSystem {
    * @param {Number} deltaTime
    */
   update(deltaTime) {
-    this.entityManager.getEntities().forEach((entity) => {
+    this.entities.forEach((entity) => {
       this.horizontal(entity, deltaTime);
       this.vertical(entity, deltaTime);
     });

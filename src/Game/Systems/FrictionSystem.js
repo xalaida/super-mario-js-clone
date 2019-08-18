@@ -6,7 +6,7 @@ export default class FrictionSystem {
    */
   constructor(entities) {
     this.entities = entities;
-    this.friction = 50;
+    this.friction = game.config.physics.friction;
   }
 
   /**

@@ -4,10 +4,10 @@ export default class GravitySystem {
   /**
    * GravitySystem constructor
    *
-   * @param {EntityManager} entityManager
+   * @param {Array|Map} entities
    */
-  constructor(entityManager) {
-    this.entityManager = entityManager;
+  constructor(entities) {
+    this.entities = entities;
     this.gravity = new Vector(0, game.config.physics.gravity);
   }
 
@@ -17,7 +17,7 @@ export default class GravitySystem {
    * @param {Number} deltaTime
    */
   update(deltaTime) {
-    this.entityManager.getEntities().forEach((entity) => {
+    this.entities.forEach((entity) => {
       entity.velocity.set(
         entity.velocity.plus(this.gravity.scale(deltaTime)),
       );
