@@ -13,7 +13,7 @@ export default class SpriteLoader {
   static load(url) {
     return fetch(url)
       .then(response => response.json())
-      .then(spec => SpriteLoader.createSpriteMap(spec));
+      .then(spec => SpriteLoader.createMap(spec));
   }
 
   /**
@@ -22,7 +22,7 @@ export default class SpriteLoader {
    * @param spec
    * @returns {Promise<SpriteMap>}
    */
-  static createSpriteMap({ url, sprites }) {
+  static createMap({ url, sprites }) {
     return ImageLoader.load(url)
       .then((image) => {
         const spriteMap = new SpriteMap(image);
