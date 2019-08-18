@@ -1,3 +1,5 @@
+/* eslint-disable class-methods-use-this */
+
 export default class Component {
   /**
    * Component constructor
@@ -13,7 +15,5 @@ export default class Component {
   /**
    * Update the component
    */
-  update() {
-    console.log(`Override the component ${this.constructor.name} update method`);
-  }
+  update() {}
 }
