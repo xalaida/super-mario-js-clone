@@ -25,6 +25,7 @@ import MarioFactory from '../Entities/Mario/MarioFactory.js';
 import KoopaFactory from '../Entities/Koopa/KoopaFactory.js';
 import GoombaFactory from '../Entities/Goomba/GoombaFactory.js';
 import SpriteLoader from '../../Engine/Loaders/SpriteLoader.js';
+import EnemySpawner from '../Spawner/EnemySpawner.js';
 
 export default class PlayScene extends Scene {
   /**
@@ -45,13 +46,26 @@ export default class PlayScene extends Scene {
    * @returns {Promise}
    */
   load() {
-    return Promise.all([
-      this.loadTiles(),
-      this.loadEntities(),
-    ])
+    return this.loadTiles()
+      .then(() => this.loadEntities())
       .then(() => this.loadSystems())
       .then(() => this.loadLayers())
       .then(() => this.loadDebug());
+  }
+
+  /**
+   * Load entities of the scene
+   *
+   * @returns {Promise<SpriteMap>}
+   */
+  loadEntities() {
+    this.enemySpawner = new EnemySpawner(this.enemiesSpawnMap, this.entityManager, this.camera);
+
+    return SpriteLoader.load('/resources/specs/characters.json')
+      .then(spriteMap => this.loadGoomba(spriteMap))
+      .then(spriteMap => this.loadKoopa(spriteMap))
+      .then(spriteMap => this.loadController(spriteMap))
+      .then(spriteMap => this.loadMario(spriteMap));
   }
 
   /**
@@ -67,32 +81,37 @@ export default class PlayScene extends Scene {
         const tileSize = new Size(game.config.tiles.size.width, game.config.tiles.size.height);
         this.collisionsTileMap = new TileMap(game.config, tileSize);
         this.backgroundTileMap = new TileMap(game.config, tileSize);
+        this.enemiesSpawnMap = new TileMap(game.config, tileSize);
 
         this.tileCollider = new TileCollider(this.collisionsTileMap);
 
         const mapping = {
           // Blocks
-          '#': { sprite: 'ground', type: 'image', options: { solid: true } },
-          '%': { sprite: 'bricks', type: 'image', options: { solid: true } },
-          'O': { sprite: 'chance', type: 'animation', options: { solid: true } },
+          '#': { name: 'ground', type: 'image', options: { solid: true } },
+          '%': { name: 'bricks', type: 'image', options: { solid: true } },
+          'O': { name: 'chance', type: 'animation', options: { solid: true } },
 
           // Vertical Pipe
-          '╗': { sprite: 'pipe-vertical-top-left', type: 'image', options: { solid: true } },
-          '╔': { sprite: 'pipe-vertical-top-right', type: 'image', options: { solid: true } },
-          '⎜': { sprite: 'pipe-vertical-left', type: 'image', options: { solid: true } },
-          '⎥': { sprite: 'pipe-vertical-right', type: 'image', options: { solid: true } },
+          '╗': { name: 'pipe-vertical-top-left', type: 'image', options: { solid: true } },
+          '╔': { name: 'pipe-vertical-top-right', type: 'image', options: { solid: true } },
+          '⎜': { name: 'pipe-vertical-left', type: 'image', options: { solid: true } },
+          '⎥': { name: 'pipe-vertical-right', type: 'image', options: { solid: true } },
 
           // Structures
-          '╭': { sprite: 'cloud-1-1', type: 'image', options: { solid: false, layer: 'background' } },
-          '╌': { sprite: 'cloud-1-2', type: 'image', options: { solid: false, layer: 'background' } },
-          '╮': { sprite: 'cloud-1-3', type: 'image', options: { solid: false, layer: 'background' } },
-          '╰': { sprite: 'cloud-2-1', type: 'image', options: { solid: false, layer: 'background' } },
-          '━': { sprite: 'cloud-2-2', type: 'image', options: { solid: false, layer: 'background' } },
-          '╯': { sprite: 'cloud-2-3', type: 'image', options: { solid: false, layer: 'background' } },
+          '╭': { name: 'cloud-1-1', type: 'image', options: { solid: false, layer: 'background' } },
+          '╌': { name: 'cloud-1-2', type: 'image', options: { solid: false, layer: 'background' } },
+          '╮': { name: 'cloud-1-3', type: 'image', options: { solid: false, layer: 'background' } },
+          '╰': { name: 'cloud-2-1', type: 'image', options: { solid: false, layer: 'background' } },
+          '━': { name: 'cloud-2-2', type: 'image', options: { solid: false, layer: 'background' } },
+          '╯': { name: 'cloud-2-3', type: 'image', options: { solid: false, layer: 'background' } },
+
+          // Enemy spawns
+          '⚆': { name: 'goomba', type: 'enemy', options: {} },
+          '⚇': { name: 'koopa', type: 'enemy', options: {} },
         };
 
         return (new TileMapLoader(sprite, this.animationManager))
-          .setTileMaps(this.collisionsTileMap, this.backgroundTileMap)
+          .setTileMaps(this.collisionsTileMap, this.backgroundTileMap, this.enemiesSpawnMap)
           .loadLvl('/resources/levels/1-1.lvl', mapping);
       });
   }
@@ -116,19 +135,6 @@ export default class PlayScene extends Scene {
   }
 
   /**
-   * Load entities of the scene
-   *
-   * @returns {Promise<SpriteMap>}
-   */
-  loadEntities() {
-    return SpriteLoader.load('/resources/specs/characters.json')
-      .then(spriteMap => this.loadGoomba(spriteMap))
-      .then(spriteMap => this.loadKoopa(spriteMap))
-      .then(spriteMap => this.loadController(spriteMap))
-      .then(spriteMap => this.loadMario(spriteMap));
-  }
-
-  /**
    * Load the controller
    * TODO: refactor without spriteMap promise resolving
    *
@@ -145,7 +151,6 @@ export default class PlayScene extends Scene {
     };
 
     this.controller = new Controller(keyBinds);
-    this.controller.enableLogging();
 
     return spriteMap;
   }
@@ -157,12 +162,7 @@ export default class PlayScene extends Scene {
    * @returns {SpriteMap}
    */
   loadGoomba(spriteMap) {
-    const goombaFactory = new GoombaFactory(spriteMap);
-    const goomba = goombaFactory.create(this.entityManager);
-    goomba.position.setX(400).setY(200);
-    goomba.velocity.setX(-game.config.enemies.goomba.speed);
-
-    this.entityManager.add(goomba);
+    this.enemySpawner.addFactory('goomba', new GoombaFactory(spriteMap, this.entityManager));
 
     return spriteMap;
   }
@@ -174,11 +174,7 @@ export default class PlayScene extends Scene {
    * @returns {SpriteMap}
    */
   loadKoopa(spriteMap) {
-    const koopaFactory = new KoopaFactory(spriteMap);
-    const koopa = koopaFactory.create(this.entityManager);
-    koopa.position.setX(350).setY(200);
-
-    this.entityManager.add(koopa);
+    this.enemySpawner.addFactory('koopa', new KoopaFactory(spriteMap, this.entityManager));
 
     return spriteMap;
   }
@@ -259,6 +255,7 @@ export default class PlayScene extends Scene {
     this.systems.set('friction', new FrictionSystem([this.mario]));
     this.systems.set('collision', new CollisionSystem(this.entityManager.getEntities(), this.tileCollider));
     this.systems.set('animation', this.animationManager);
+    this.systems.set('enemies', this.enemySpawner);
     this.systems.set('camera', this.camera);
   }
 
