@@ -12,13 +12,7 @@ export default class Mario extends Entity {
   constructor(controller, animationsMap) {
     super();
     this.controller = controller;
-    this.deceleration = new Vector(100, 0);
     this.animationPlayer = new AnimationPlayer(animationsMap);
-  }
-
-  decelerate(deltaTime) {
-    const deceleration = Math.min(Math.abs(this.velocity.x), this.deceleration.x * deltaTime);
-    this.velocity.x += this.velocity.x > 0 ? -deceleration : deceleration;
   }
 
   /**

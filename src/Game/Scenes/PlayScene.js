@@ -39,6 +39,7 @@ import GravitySystem from '../Systems/GravitySystem.js';
 import CollisionSystem from '../Systems/CollisionSystem.js';
 import EntitiesSystem from '../Systems/EntitiesSystem.js';
 import IntersectionSystem from '../Systems/IntersectionSystem.js';
+import FrictionSystem from '../Systems/FrictionSystem.js';
 
 export default class PlayScene extends Scene {
   constructor() {
@@ -266,6 +267,8 @@ export default class PlayScene extends Scene {
         this.controller.enableLogging();
 
         const mario = new Mario(this.controller, animationMap);
+        this.mario = mario;
+
         mario.size.setWidth(14).setHeight(16);
         mario.position.setX(100).setY(200);
 
@@ -380,9 +383,11 @@ export default class PlayScene extends Scene {
   }
 
   loadSystems() {
-    this.systems.set('intersection', new IntersectionSystem(this.entityManager));
     this.systems.set('entities', new EntitiesSystem(this.entityManager));
     this.systems.set('gravity', new GravitySystem(this.entityManager));
+    this.systems.set('friction', new FrictionSystem([this.mario]));
+    this.systems.set('intersection', new IntersectionSystem(this.entityManager));
+    // TODO: add FrictionSystem
     this.systems.set('collision', new CollisionSystem(this.entityManager, this.tileCollider));
     this.systems.set('animation', this.animationManager);
     this.systems.set('camera', this.camera);
