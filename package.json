@@ -7,7 +7,7 @@
     "http-server": "^0.11.1"
   },
   "scripts": {
-    "serve": "./node_modules/http-server/bin/http-server"
+    "serve": "./node_modules/.bin/http-server"
   },
   "devDependencies": {
     "eslint": "^5.16.0",
