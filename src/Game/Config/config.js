@@ -3,7 +3,7 @@ import Config from '../../Engine/Config/Config.js';
 const config = new Config({
   fps: 60,
   width: 640,
-  height: 480,
+  height: 240,
   tiles: {
     size: {
       width: 16,

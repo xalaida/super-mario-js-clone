@@ -36,7 +36,7 @@ export default class PlayScene extends Scene {
     this.systems = new Map();
     this.layers = new Map();
     this.entityManager = new EntityManager();
-    this.camera = new Camera(Vector.zero(), new Size(500, 400));
+    this.camera = new Camera(Vector.zero(), new Size(game.config.width, game.config.height));
     this.animationManager = new AnimationManager();
   }
 
