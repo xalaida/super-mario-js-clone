@@ -8,7 +8,7 @@ export default class SpriteLoader {
    * Load a sprite from a specification by the url
    *
    * @param {String} url
-   * @returns {Promise<Image>}
+   * @returns {Promise<SpriteMap>}
    */
   static load(url) {
     return fetch(url)
