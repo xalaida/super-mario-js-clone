@@ -88,8 +88,8 @@ export default class TileMap {
    * @returns {Array}
    */
   findInBounds(bounds) {
-    const {x: x1, y: y1} = bounds.start.divide(this.tileSize.toVector()).floor();
-    const {x: x2, y: y2} = bounds.end.divide(this.tileSize.toVector()).ceil();
+    const { x: x1, y: y1 } = bounds.start.divide(this.tileSize.toVector()).floor();
+    const { x: x2, y: y2 } = bounds.end.divide(this.tileSize.toVector()).ceil();
 
     const tiles = [];
 
@@ -127,7 +127,7 @@ export default class TileMap {
    * @returns {Array}
    */
   toIndices(position) {
-    const {x, y} = position.divide(this.tileSize.toVector()).floor();
+    const { x, y } = position.divide(this.tileSize.toVector()).floor();
     return [x, y];
   }
 
@@ -153,8 +153,7 @@ export default class TileMap {
   debug(view, camera) {
     this.findInBounds(camera.getBounds())
       .forEach((tile) => {
-        // TODO: extract all colors into the config
-        view.outline(camera.getProjection(tile.position), tile.size, 'green');
+        view.outline(camera.getProjection(tile.position), tile.size, game.config.debug.colors.tile);
       });
   }
 }
