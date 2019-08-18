@@ -1,0 +1,110 @@
+{
+  "url": "/resources/sprites/characters-sprite.gif",
+  "sprites": [
+    {
+      "name": "mario-idle-right",
+      "position": [275, 44],
+      "size": [16, 16]
+    },
+    {
+      "name": "mario-idle-left",
+      "position": [222, 44],
+      "size": [16, 16]
+    },
+    {
+      "name": "mario-move-right-1",
+      "position": [290, 44],
+      "size": [16, 16]
+    },
+    {
+      "name": "mario-move-right-2",
+      "position": [304, 44],
+      "size": [16, 16]
+    },
+    {
+      "name": "mario-move-right-3",
+      "position": [320, 44],
+      "size": [16, 16]
+    },
+    {
+      "name": "mario-move-left-1",
+      "position": [207, 44],
+      "size": [16, 16]
+    },
+    {
+      "name": "mario-move-left-2",
+      "position": [193, 44],
+      "size": [16, 16]
+    },
+    {
+      "name": "mario-move-left-3",
+      "position": [177, 44],
+      "size": [16, 16]
+    },
+    {
+      "name": "mario-break-right",
+      "position": [337, 44],
+      "size": [16, 16]
+    },
+    {
+      "name": "mario-break-left",
+      "position": [160, 44],
+      "size": [16, 16]
+    },
+    {
+      "name": "mario-jump-right",
+      "position": [355, 44],
+      "size": [16, 16]
+    },
+    {
+      "name": "mario-jump-left",
+      "position": [142, 44],
+      "size": [16, 16]
+    },
+    {
+      "name": "goomba-move-1",
+      "position": [296, 187],
+      "size": [16, 16]
+    },
+    {
+      "name": "goomba-move-2",
+      "position": [315, 187],
+      "size": [16, 16]
+    },
+    {
+      "name": "goomba-flat",
+      "position": [277, 187],
+      "size": [16, 16]
+    },
+    {
+      "name": "koopa-move-right-1",
+      "position": [296, 206],
+      "size": [16, 24]
+    },
+    {
+      "name": "koopa-move-right-2",
+      "position": [315, 206],
+      "size": [16, 24]
+    },
+    {
+      "name": "koopa-move-left-1",
+      "position": [201, 206],
+      "size": [16, 24]
+    },
+    {
+      "name": "koopa-move-left-2",
+      "position": [182, 206],
+      "size": [16, 24]
+    },
+    {
+      "name": "koopa-hiding",
+      "position": [144, 206],
+      "size": [16, 24]
+    },
+    {
+      "name": "koopa-waking-up",
+      "position": [163, 206],
+      "size": [16, 24]
+    }
+  ]
+}
