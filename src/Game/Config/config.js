@@ -12,10 +12,11 @@ const config = new Config({
   },
   physics: {
     gravity: 600,
+    friction: 50,
   },
   player: {
     maxSpeed: 80,
-    acceleration: 80,
+    acceleration: 120,
     turboMaxSpeed: 120,
     turboAcceleration: 120,
   },

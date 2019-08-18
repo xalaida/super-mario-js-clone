@@ -1,0 +1,15 @@
+{
+  "url": "/resources/sprites/world-sprite.png",
+  "tiles": [
+    {
+      "name": "ground",
+      "position": { "x": 0, "y": 0 },
+      "size": { "width": 16, "height": 16 }
+    },
+    {
+      "name": "bricks",
+      "position": { "x": 16, "y": 0 },
+      "size": { "width": 16, "height": 16 }
+    }
+  ]
+}

@@ -9,7 +9,7 @@ export default class Movement extends Component {
    */
   constructor(entity) {
     super('movement', entity);
-    this.accelaration = new Vector(100, 0);
+    this.accelaration = new Vector(500, 0);
     this.maxSpeed = 100;
   }
 

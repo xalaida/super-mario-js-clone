@@ -15,7 +15,7 @@ export default class Turbo extends Component {
    * Update the turbo component
    */
   update() {
-    if (this.entity.controller.isPressed('actionA')) {
+    if (this.entity.controller.isPressed('a')) {
       this.entity.component('movement').maxSpeed = game.config.player.turboMaxSpeed;
       this.entity.component('movement').accelaration = new Vector(game.config.player.turboMaxSpeed, 0);
     } else {

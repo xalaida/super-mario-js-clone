@@ -6,7 +6,7 @@ export default class EntityManager {
    */
   constructor() {
     this.entities = new Map();
-    this.collider = new EntityCollider(this.entities);
+    this.entityCollider = new EntityCollider(this.entities);
   }
 
   /**
@@ -40,7 +40,7 @@ export default class EntityManager {
    * Check entities intersection
    */
   checkIntersections() {
-    this.entities.forEach(entity => this.collider.check(entity));
+    this.entities.forEach(entity => this.entityCollider.check(entity));
   }
 
   /**
