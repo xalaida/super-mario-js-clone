@@ -37,6 +37,16 @@ export default class Grid {
   }
 
   /**
+   * Delete a value by coordinates
+   *
+   * @param {Number} xIndex
+   * @param {Number} yIndex
+   */
+  remove(xIndex, yIndex) {
+    delete this.items[xIndex][yIndex];
+  }
+
+  /**
    * Iterate through a grid
    *
    * @param {Function} callback

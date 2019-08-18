@@ -37,7 +37,7 @@ export default class TileMap {
   }
 
   /**
-   * Get a tile by coordinates
+   * Get a tile by indices
    *
    * @param {Number} xIndex
    * @param {Number} yIndex
@@ -48,14 +48,34 @@ export default class TileMap {
   }
 
   /**
+   * Remove a tile by indices
+   *
+   * @param xIndex
+   * @param yIndex
+   */
+  remove(xIndex, yIndex) {
+    return this.tiles.remove(xIndex, yIndex);
+  }
+
+  /**
+   * Remove a tile by position
+   *
+   * @param {Vector} position
+   */
+  removeByPosition(position) {
+    const [xIndex, yIndex] = this.toIndices(position);
+    return this.remove(xIndex, yIndex);
+  }
+
+  /**
    * Find a tile by the position
    *
    * @param {Vector} position
    * @returns {Tile|undefined}
    */
   findByPosition(position) {
-    const [x, y] = this.toIndices(position);
-    return this.get(x, y);
+    const [xIndex, yIndex] = this.toIndices(position);
+    return this.get(xIndex, yIndex);
   }
 
   /**
@@ -68,8 +88,8 @@ export default class TileMap {
    * @returns {Array}
    */
   findInBounds(bounds) {
-    const { x: x1, y: y1 } = bounds.start.divide(this.tileSize.toVector()).floor();
-    const { x: x2, y: y2 } = bounds.end.divide(this.tileSize.toVector()).ceil();
+    const {x: x1, y: y1} = bounds.start.divide(this.tileSize.toVector()).floor();
+    const {x: x2, y: y2} = bounds.end.divide(this.tileSize.toVector()).ceil();
 
     const tiles = [];
 
@@ -107,7 +127,7 @@ export default class TileMap {
    * @returns {Array}
    */
   toIndices(position) {
-    const { x, y } = position.divide(this.tileSize.toVector()).floor();
+    const {x, y} = position.divide(this.tileSize.toVector()).floor();
     return [x, y];
   }
 
