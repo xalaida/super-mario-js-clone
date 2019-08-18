@@ -87,8 +87,9 @@ export default class PlayScene extends Scene {
 
         const mapping = {
           // Blocks
-          '#': { name: 'ground', type: 'image', options: { solid: true } },
+          '▓': { name: 'ground', type: 'image', options: { solid: true } },
           '%': { name: 'bricks', type: 'image', options: { solid: true } },
+          '#': { name: 'solid', type: 'image', options: { solid: true } },
           'O': { name: 'chance', type: 'animation', options: { solid: true } },
 
           // Vertical Pipe
@@ -104,6 +105,11 @@ export default class PlayScene extends Scene {
           '╰': { name: 'cloud-2-1', type: 'image', options: { solid: false, layer: 'background' } },
           '━': { name: 'cloud-2-2', type: 'image', options: { solid: false, layer: 'background' } },
           '╯': { name: 'cloud-2-3', type: 'image', options: { solid: false, layer: 'background' } },
+
+          // Structures
+          '◞': { name: 'bush-1-1', type: 'image', options: { solid: false, layer: 'background' } },
+          '⌒': { name: 'bush-1-2', type: 'image', options: { solid: false, layer: 'background' } },
+          '◟': { name: 'bush-1-3', type: 'image', options: { solid: false, layer: 'background' } },
 
           // Enemy spawns
           '⚆': { name: 'goomba', type: 'enemy', options: {} },
