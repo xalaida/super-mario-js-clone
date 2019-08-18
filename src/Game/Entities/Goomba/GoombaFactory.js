@@ -11,10 +11,12 @@ export default class GoombaFactory {
   /**
    * GoombaFactory constructor
    *
-   * @param spriteMap
+   * @param {SpriteMap} spriteMap
+   * @param {EntityManager} entityManager
    */
-  constructor(spriteMap) {
+  constructor(spriteMap, entityManager) {
     this.spriteMap = spriteMap;
+    this.entityManager = entityManager;
   }
 
   /**
@@ -40,20 +42,22 @@ export default class GoombaFactory {
   /**
    * Create a goomba
    *
-   * @param {EntityManager} entityManager
+   * @param {Vector} position
    * @returns {Goomba}
    */
-  create(entityManager) {
+  create(position) {
     const goomba = new Goomba(this.createAnimationsMap());
 
     goomba.addComponent(new Stompable(goomba));
     goomba.addComponent(new Solid(goomba));
     goomba.addComponent(new Walking(goomba, game.config.enemies.goomba.speed));
-    goomba.addComponent(new Killable(goomba, entityManager));
+    goomba.addComponent(new Killable(goomba, this.entityManager));
     goomba.addComponent(new Collisions(goomba));
     goomba.addComponent(new Intersection(goomba));
 
     goomba.size.setWidth(14).setHeight(16);
+    goomba.position.set(position);
+    goomba.velocity.setX(-game.config.enemies.goomba.speed);
 
     return goomba;
   }

@@ -14,9 +14,11 @@ export default class KoopaFactory {
    * KoopaFactory constructor
    *
    * @param {SpriteMap} spriteMap
+   * @param {EntityManager} entityManager
    */
-  constructor(spriteMap) {
+  constructor(spriteMap, entityManager) {
     this.spriteMap = spriteMap;
+    this.entityManager = entityManager;
   }
 
   /**
@@ -52,16 +54,16 @@ export default class KoopaFactory {
   /**
    * Create a koopa
    *
-   * @param {EntityManager} entityManager
+   * @param {Vector} position
    * @returns {Koopa}
    */
-  create(entityManager) {
+  create(position) {
     const koopa = new Koopa(this.createAnimationsMap());
 
     koopa.addComponent(Direction.left(koopa));
     koopa.addComponent(new Walking(koopa, game.config.enemies.koopa.speed));
     koopa.addComponent(new Solid(koopa));
-    koopa.addComponent(new Killable(koopa, entityManager));
+    koopa.addComponent(new Killable(koopa, this.entityManager));
     koopa.addComponent(new Stompable(koopa));
     koopa.addComponent(new Collisions(koopa));
     koopa.addComponent(new Intersection(koopa));
@@ -69,6 +71,7 @@ export default class KoopaFactory {
     koopa.setState(new WalkingState(koopa));
 
     koopa.size.setWidth(14).setHeight(16);
+    koopa.position.set(position);
 
     return koopa;
   }
