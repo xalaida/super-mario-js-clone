@@ -1,8 +1,6 @@
 /* eslint-disable quote-props */
 
-import ImageLoader from '../../Engine/Loaders/ImageLoader.js';
 import Scene from '../../Engine/Scenes/Scene.js';
-import SpriteMap from '../../Engine/Graphic/Sprites/SpriteMap.js';
 import Vector from '../../Engine/Math/Vector.js';
 import Size from '../../Engine/Math/Size.js';
 import TileMap from '../../Engine/Tiles/TileMap.js';
@@ -51,46 +49,26 @@ export default class PlayScene extends Scene {
       this.loadTiles(),
       this.loadEntities(),
     ])
-      .then(() => this.loadDebug())
-      .then(() => this.loadSystems());
+      .then(() => this.loadSystems())
+      .then(() => this.loadLayers())
+      .then(() => this.loadDebug());
   }
 
+  /**
+   * Load level tiles
+   * TODO: refactor with LevelLoader
+   *
+   * @returns {Promise}
+   */
   loadTiles() {
-    // TODO: refactor loading level with JSON specification
-    return ImageLoader.load('/resources/sprites/world-sprite.png')
-      .then((image) => {
-        const sprite = new SpriteMap(image);
-
-        sprite.define('ground', new Vector(0, 0), new Size(16, 16));
-        sprite.define('bricks', new Vector(16, 0), new Size(16, 16));
-
-        sprite.define('chance-1', new Vector(384, 0), new Size(16, 16));
-        sprite.define('chance-2', new Vector(400, 0), new Size(16, 16));
-        sprite.define('chance-3', new Vector(416, 0), new Size(16, 16));
-
-        // Sprite groups
-        sprite.define('pipe-vertical-top-left', new Vector(0, 128), new Size(16, 16));
-        sprite.define('pipe-vertical-top-right', new Vector(16, 128), new Size(16, 16));
-        sprite.define('pipe-vertical-left', new Vector(0, 144), new Size(16, 16));
-        sprite.define('pipe-vertical-right', new Vector(16, 144), new Size(16, 16));
-
-        sprite.define('cloud-1-1', new Vector(0, 320), new Size(16, 16));
-        sprite.define('cloud-1-2', new Vector(16, 320), new Size(16, 16));
-        sprite.define('cloud-1-3', new Vector(32, 320), new Size(16, 16));
-        sprite.define('cloud-2-1', new Vector(0, 336), new Size(16, 16));
-        sprite.define('cloud-2-2', new Vector(16, 336), new Size(16, 16));
-        sprite.define('cloud-2-3', new Vector(32, 336), new Size(16, 16));
-
-        return sprite;
-      })
+    return SpriteLoader.load('/resources/specs/world.json')
+      .then(spriteMap => this.loadAnimations(spriteMap))
       .then((sprite) => {
-        this.animationManager.add('chance', new Animation([
-          sprite.get('chance-1'),
-          sprite.get('chance-1'),
-          sprite.get('chance-2'),
-          sprite.get('chance-3'),
-          sprite.get('chance-2'),
-        ], 8));
+        const tileSize = new Size(game.config.tiles.size.width, game.config.tiles.size.height);
+        this.collisionsTileMap = new TileMap(game.config, tileSize);
+        this.backgroundTileMap = new TileMap(game.config, tileSize);
+
+        this.tileCollider = new TileCollider(this.collisionsTileMap);
 
         const mapping = {
           // Blocks
@@ -113,39 +91,35 @@ export default class PlayScene extends Scene {
           '╯': { sprite: 'cloud-2-3', type: 'image', options: { solid: false, layer: 'background' } },
         };
 
-        const tileSize = new Size(game.config.tiles.size.width, game.config.tiles.size.height);
-        const collisionsTileMap = new TileMap(game.config, tileSize);
-        const backgroundTileMap = new TileMap(game.config, tileSize);
-
-
-        this.tileCollider = new TileCollider(collisionsTileMap);
-
-        const debugLayer = new DebugLayer();
-
-        if (game.config.debug.tiles) {
-          debugLayer.add(backgroundTileMap);
-          debugLayer.add(collisionsTileMap);
-        }
-
-        if (game.config.debug.collisions) {
-          debugLayer.add(this.tileCollider);
-        }
-
-        if (game.config.debug.camera) {
-          debugLayer.add(this.camera);
-        }
-
-        this.layers.set('sky', new SkyLayer('#64abfa'));
-        this.layers.set('background', new BackgroundLayer(backgroundTileMap));
-        this.layers.set('collisions', new CollisionsLayer(collisionsTileMap, this.entityManager.getEntities()));
-        this.layers.set('debug', debugLayer);
-
         return (new TileMapLoader(sprite, this.animationManager))
-          .setTileMaps(collisionsTileMap, backgroundTileMap)
+          .setTileMaps(this.collisionsTileMap, this.backgroundTileMap)
           .loadLvl('/resources/levels/1-1.lvl', mapping);
       });
   }
 
+  /**
+   * Load animations
+   *
+   * @param {SpriteMap} spriteMap
+   * @returns {SpriteMap}
+   */
+  loadAnimations(spriteMap) {
+    this.animationManager.add('chance', new Animation([
+      spriteMap.get('chance-1'),
+      spriteMap.get('chance-1'),
+      spriteMap.get('chance-2'),
+      spriteMap.get('chance-3'),
+      spriteMap.get('chance-2'),
+    ], 8));
+
+    return spriteMap;
+  }
+
+  /**
+   * Load entities of the scene
+   *
+   * @returns {Promise<SpriteMap>}
+   */
   loadEntities() {
     return SpriteLoader.load('/resources/specs/characters.json')
       .then(spriteMap => this.loadGoomba(spriteMap))
@@ -154,6 +128,13 @@ export default class PlayScene extends Scene {
       .then(spriteMap => this.loadMario(spriteMap));
   }
 
+  /**
+   * Load the controller
+   * TODO: refactor without spriteMap promise resolving
+   *
+   * @param {SpriteMap} spriteMap
+   * @returns {SpriteMap}
+   */
   loadController(spriteMap) {
     const keyBinds = {
       'ArrowLeft': 'left',
@@ -169,6 +150,12 @@ export default class PlayScene extends Scene {
     return spriteMap;
   }
 
+  /**
+   * Load goomba
+   *
+   * @param {SpriteMap} spriteMap
+   * @returns {SpriteMap}
+   */
   loadGoomba(spriteMap) {
     const goombaFactory = new GoombaFactory(spriteMap);
     const goomba = goombaFactory.create(this.entityManager);
@@ -180,6 +167,12 @@ export default class PlayScene extends Scene {
     return spriteMap;
   }
 
+  /**
+   * Load koopa
+   *
+   * @param {SpriteMap} spriteMap
+   * @returns {SpriteMap}
+   */
   loadKoopa(spriteMap) {
     const koopaFactory = new KoopaFactory(spriteMap);
     const koopa = koopaFactory.create(this.entityManager);
@@ -190,6 +183,12 @@ export default class PlayScene extends Scene {
     return spriteMap;
   }
 
+  /**
+   * Load mario
+   *
+   * @param {SpriteMap} spriteMap
+   * @returns {SpriteMap}
+   */
   loadMario(spriteMap) {
     const marioFactory = new MarioFactory(spriteMap);
     this.mario = marioFactory.create(this.controller, this.entityManager, this.camera);
@@ -216,23 +215,67 @@ export default class PlayScene extends Scene {
     });
   }
 
+  /**
+   * Load the debug layer
+   */
   loadDebug() {
-    this.layers.get('debug').add(this.entityManager);
+    if (game.config.debug.entities) {
+      this.layers.get('debug').add(this.entityManager);
+    }
 
-    // TODO: refactor
     if (game.config.debug.controller) {
       this.layers.get('debug').add(this.controller);
     }
+
+    if (game.config.debug.collisions) {
+      this.layers.get('debug').add(this.tileCollider);
+    }
+
+    if (game.config.debug.camera) {
+      this.layers.get('debug').add(this.camera);
+    }
+
+    if (game.config.debug.tiles) {
+      this.layers.get('debug').add(this.layers.get('background').tileMap);
+      this.layers.get('debug').add(this.layers.get('collisions').tileMap);
+    }
   }
 
+  /**
+   * Load all game systems in the correct order:
+   *
+   * -> Entities intersection (allows to handle correctly all components based on intersection)
+   * -> Entity components (process components behaviour for each entity)
+   * -> Gravity (apply gravity for entities)
+   * -> Friction (apply friction for entities)
+   * -> Collision (process collisions for entities)
+   * -> Animation (update all animations)
+   * -> Camera (update the camera)
+   */
   loadSystems() {
+    this.systems.set('intersection', new IntersectionSystem(this.entityManager));
     this.systems.set('entities', new EntitiesSystem(this.entityManager.getEntities()));
     this.systems.set('gravity', new GravitySystem(this.entityManager.getEntities()));
     this.systems.set('friction', new FrictionSystem([this.mario]));
-    this.systems.set('intersection', new IntersectionSystem(this.entityManager));
     this.systems.set('collision', new CollisionSystem(this.entityManager.getEntities(), this.tileCollider));
     this.systems.set('animation', this.animationManager);
     this.systems.set('camera', this.camera);
+  }
+
+  /**
+   * Load the scene layers in the correct order:
+   *
+   * -> Sky layer (blue sky as the first render layer)
+   * -> Background layer (background tiles like clouds, trees, etc)
+   * -> Collisions layer (entities and interactive tiles)
+   * -> Debug layer (All debug information)
+   * -> UI layer (Game score, current level, hud, game time, etc)
+   */
+  loadLayers() {
+    this.layers.set('sky', new SkyLayer('#64abfa'));
+    this.layers.set('background', new BackgroundLayer(this.backgroundTileMap));
+    this.layers.set('collisions', new CollisionsLayer(this.collisionsTileMap, this.entityManager.getEntities()));
+    this.layers.set('debug', new DebugLayer());
   }
 
   /**
