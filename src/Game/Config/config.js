@@ -47,6 +47,7 @@ const config = new Config({
     colors: {
       hitBox: 'blue',
       drawBox: 'red',
+      tile: 'green',
     },
   },
 });
