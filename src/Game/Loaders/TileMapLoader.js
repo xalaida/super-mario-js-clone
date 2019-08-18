@@ -1,16 +1,19 @@
 import FileLoader from '../../Engine/Loaders/FileLoader.js';
 import SpriteTile from '../../Engine/Tiles/SpriteTile.js';
 import AnimatedTile from '../../Engine/Tiles/AnimatedTile.js';
+import SpawnTile from '../Spawner/SpawnTile.js';
 
 export default class TileMapLoader {
-  constructor(spriteMap, animationManager = null) {
+  // TODO: refactor as level loader
+  constructor(spriteMap, animationManager) {
     this.spriteMap = spriteMap;
     this.animationManager = animationManager;
   }
 
-  setTileMaps(collisionTileMap, backgroundTileMap) {
+  setTileMaps(collisionTileMap, backgroundTileMap, enemiesTileMap) {
     this.collisionTileMap = collisionTileMap;
     this.backgroundTileMap = backgroundTileMap;
+    this.enemiesTileMap = enemiesTileMap;
 
     return this;
   }
@@ -33,6 +36,10 @@ export default class TileMapLoader {
   }
 
   addTile(x, y, mapping) {
+    if (mapping.type === 'enemy') {
+      return this.enemiesTileMap.add(x, y, this.createTile(mapping));
+    }
+
     if (mapping.options.layer && mapping.options.layer === 'background') {
       return this.backgroundTileMap.add(x, y, this.createTile(mapping));
     }
@@ -41,10 +48,14 @@ export default class TileMapLoader {
   }
 
   createTile(mapping) {
-    if (mapping.type === 'animation') {
-      return new AnimatedTile(this.animationManager.get(mapping.sprite), mapping.options);
+    if (mapping.type === 'enemy') {
+      return new SpawnTile(mapping.name);
     }
 
-    return new SpriteTile(this.spriteMap.get(mapping.sprite), mapping.options);
+    if (mapping.type === 'animation') {
+      return new AnimatedTile(this.animationManager.get(mapping.name), mapping.options);
+    }
+
+    return new SpriteTile(this.spriteMap.get(mapping.name), mapping.options);
   }
 }
