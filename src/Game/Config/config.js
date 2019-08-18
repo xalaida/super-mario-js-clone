@@ -43,6 +43,7 @@ const config = new Config({
     collisions: true,
     camera: true,
     controller: true,
+    entities: true,
     colors: {
       hitBox: 'blue',
       drawBox: 'red',
