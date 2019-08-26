@@ -251,17 +251,18 @@ export default class PlayScene extends Scene {
    * -> Entity components (process components behaviour for each entity)
    * -> Gravity (apply gravity for entities)
    * -> Friction (apply friction for entities)
+   * -> Fall out (kill all fallen entities)
    * -> Collision (process collisions for entities)
    * -> Animation (update all animations)
    * -> Camera (update the camera)
    */
   loadSystems() {
     this.systems.set('intersection', new IntersectionSystem(this.entityManager));
+    this.systems.set('entities', new EntitiesSystem(this.entityManager.getEntities()));
     this.systems.set('gravity', new GravitySystem(this.entityManager.getEntities()));
     this.systems.set('friction', new FrictionSystem([this.mario]));
+    this.systems.set('fallOut', new FallOutSystem(this.entityManager.getEntities()));
     this.systems.set('collision', new CollisionSystem(this.entityManager.getEntities(), this.tileCollider));
-    this.systems.set('fallOut', new FallOutSystem(this.entityManager.getEntities(), this.tileCollider));
-    this.systems.set('entities', new EntitiesSystem(this.entityManager.getEntities()));
     this.systems.set('animation', this.animationManager);
     this.systems.set('enemies', this.enemySpawner);
     this.systems.set('camera', this.camera);
