@@ -66,11 +66,11 @@ export default class Game {
   render(interpolation) {
     this.sceneManager.scene.render(this.view, interpolation);
 
-    if (this.config.debug.fps) {
+    if (this.config.shouldDebug('fps')) {
       this.fps.render(this.view);
     }
 
-    if (this.config.debug.memory) {
+    if (this.config.shouldDebug('memory')) {
       this.memory.render(this.view);
     }
   }

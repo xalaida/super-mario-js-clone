@@ -27,8 +27,7 @@ npm run serve
 - Arrow up - jump
 - Space - turbo
 
-### TODO: bugs, features, performance issues, tech debt, code problems
-- REFACTOR: add config debug helper for component with usage: config.debug('fps'). should works with structure config: {enabled: true, component: { fps: true }} 
+### TODO: bugs, features, performance issues, tech debt, code problems 
 - REFACTOR: check all config variables and refactor the Config class with override() method and kind of deepMerging feature
 - BUG: sometimes game speed slows and comes back after page refresh (probably game loop timing function problems)
 - BUG: when mario touch hiding koopa, mario dies at once

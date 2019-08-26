@@ -20,11 +20,23 @@ export default class Config {
       width: 400,
       height: 400,
       debug: {
-        fps: false,
-        memory: false,
-        tiles: false,
+        enable: true,
+        components: {
+          fps: true,
+          memory: true,
+          tiles: true,
+        },
       },
     };
+  }
+
+  /**
+   * Determine if component should be debugged
+   *
+   * @param {String} component
+   */
+  shouldDebug(component) {
+    return this.debug.enable && this.debug.components[component];
   }
 
   /**

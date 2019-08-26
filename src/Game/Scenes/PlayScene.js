@@ -222,23 +222,23 @@ export default class PlayScene extends Scene {
    * Load the debug layer
    */
   loadDebug() {
-    if (game.config.debug.entities) {
+    if (game.config.shouldDebug('entities')) {
       this.layers.get('debug').add(this.entityManager);
     }
 
-    if (game.config.debug.controller) {
+    if (game.config.shouldDebug('controller')) {
       this.layers.get('debug').add(this.controller);
     }
 
-    if (game.config.debug.collisions) {
+    if (game.config.shouldDebug('collisions')) {
       this.layers.get('debug').add(this.tileCollider);
     }
 
-    if (game.config.debug.camera) {
+    if (game.config.shouldDebug('camera')) {
       this.layers.get('debug').add(this.camera);
     }
 
-    if (game.config.debug.tiles) {
+    if (game.config.shouldDebug('tiles')) {
       this.layers.get('debug').add(this.layers.get('background').tileMap);
       this.layers.get('debug').add(this.layers.get('collisions').tileMap);
     }

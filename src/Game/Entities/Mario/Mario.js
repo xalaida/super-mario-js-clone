@@ -69,9 +69,10 @@ export default class Mario extends Entity {
    * @param {Camera} camera
    */
   debug(view, camera) {
-    this.renderJumpDebug(view);
-    this.renderHitBox(view, camera);
-    this.renderDebug(view);
+    if (game.config.shouldDebug('entities')) {
+      this.debugHitBox(view, camera);
+      this.debugCoordinates(view);
+    }
   }
 
   /**
@@ -79,7 +80,7 @@ export default class Mario extends Entity {
    *
    * @param {View} view
    */
-  renderDebug(view) {
+  debugCoordinates(view) {
     view.text(`Velocity X: ${this.velocity.x}`, new Vector(200, 20));
     view.text(`Velocity Y: ${this.velocity.y}`, new Vector(200, 40));
     view.text(`Position X: ${this.position.x}`, new Vector(200, 60));
@@ -92,19 +93,7 @@ export default class Mario extends Entity {
    * @param {View} view
    * @param {Camera} camera
    */
-  renderHitBox(view, camera) {
+  debugHitBox(view, camera) {
     view.outline(camera.getProjection(this.position), this.size, game.config.debug.colors.hitBox);
-  }
-
-  /**
-   * Render the jump debug
-   *
-   * @param {View} view
-   */
-  renderJumpDebug(view) {
-    view.text(`Jump ready: ${this.component('jump').ready}`, new Vector(200, 100));
-    view.text(`Jump left time: ${this.component('jump').leftTime}`, new Vector(200, 120));
-    view.text(`Jump request time: ${this.component('jump').requestTime}`, new Vector(200, 140));
-    view.text(`Jump grace time: ${this.component('jump').graceTime}`, new Vector(200, 160));
   }
 }

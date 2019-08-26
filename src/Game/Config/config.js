@@ -38,13 +38,16 @@ const config = new Config({
     },
   },
   debug: {
-    fps: true,
-    memory: true,
-    tiles: true,
-    collisions: true,
-    camera: true,
-    controller: true,
-    entities: true,
+    enable: false,
+    components: {
+      fps: true,
+      memory: true,
+      tiles: true,
+      collisions: true,
+      camera: true,
+      controller: true,
+      entities: true,
+    },
     colors: {
       hitBox: 'blue',
       drawBox: 'red',
