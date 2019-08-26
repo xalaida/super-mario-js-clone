@@ -27,6 +27,13 @@ export default class Config {
     };
   }
 
+  /**
+   * Merge the configurations
+   *
+   * @param {Object} target
+   * @param {Object} source
+   * @returns {Object}
+   */
   merge(target, source) {
     const output = Object.assign({}, target);
 
