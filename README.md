@@ -29,7 +29,7 @@ npm run serve
 
 ### TODO: bugs, features, performance issues, tech debt, code problems
 - BUG: sometimes game speed slows and comes back after page refresh (probably game loop timing function problems)
-- REFACTOR: move all TODOS from code into here
+- BUG: when mario touch hiding koopa, mario dies at once
 - FEATURE: add game over scene
 - FEATURE: koopa in panic state should kill another enemies
 - FEATURE: win condition with flag jump
