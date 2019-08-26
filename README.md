@@ -28,7 +28,6 @@ npm run serve
 - Space - turbo
 
 ### TODO: bugs, features, performance issues, tech debt, code problems 
-- REFACTOR: check all config variables and refactor the Config class with override() method and kind of deepMerging feature
 - BUG: sometimes game speed slows and comes back after page refresh (probably game loop timing function problems)
 - BUG: when mario touch hiding koopa, mario dies at once
 - FEATURE: add game over scene
