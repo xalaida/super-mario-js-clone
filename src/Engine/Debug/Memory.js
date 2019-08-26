@@ -7,8 +7,8 @@ export default class Memory {
    * @param {Config} config
    */
   constructor(config) {
-    this.positionLineUsed = new Vector(config.width - 120, 60);
-    this.positionLineTotal = new Vector(config.width - 120, 40);
+    this.positionLineTotal = new Vector(config.width - 120, 20);
+    this.positionLineUsed = new Vector(config.width - 120, 40);
   }
 
   /**
@@ -17,8 +17,8 @@ export default class Memory {
    * @param {View} view
    */
   render(view) {
-    view.text(`Memory used: ${Memory.format(performance.memory.usedJSHeapSize)}`, this.positionLineUsed);
     view.text(`Memory total: ${Memory.format(performance.memory.totalJSHeapSize)}`, this.positionLineTotal);
+    view.text(`Memory used: ${Memory.format(performance.memory.usedJSHeapSize)}`, this.positionLineUsed);
   }
 
   /**

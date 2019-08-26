@@ -111,7 +111,7 @@ export default class Controller {
   debug(view) {
     Object.values(this.keyBinds).forEach((action, index) => {
       const debugString = `${action.toUpperCase()}: ${this.isPressed(action) ? 'Pressed' : 'Released'}`;
-      view.text(debugString, new Vector(10, 20 + (index * 20)));
+      view.text(debugString, new Vector(10, 40 + (index * 20)));
     });
   }
 }
