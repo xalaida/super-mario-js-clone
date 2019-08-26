@@ -1,7 +1,7 @@
 # Super Mario Bros Javascript Clone
 A javascript clone of the most popular Nintendo Super Mario Bros game.
 
-![Screenshot](Screenshot from 2019-08-26 21-58-03.png)
+![Screenshot](resources/screenshots/Screenshot_from_2019-08-26_21-58-03.png)
 
 ## Installation
 1. Download ZIP or clone the repository
