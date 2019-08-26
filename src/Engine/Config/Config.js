@@ -5,29 +5,45 @@ export default class Config {
    * @param {Object} options
    */
   constructor(options = {}) {
-    this.fps = 60;
-    this.showFps = false;
-    this.showTileGrid = false;
-    this.width = 400;
-    this.height = 400;
-
-    this.debug = {
-      fps: false,
-      memory: false,
-      tiles: false,
-    };
-
-    this.merge(options);
+    Object.assign(this, this.merge(this, Config.defaults));
+    Object.assign(this, this.merge(this, options));
   }
 
   /**
-   * Merge config options
+   * Default config options
    *
-   * @param {Object} options
+   * @returns {Object}
    */
-  merge(options) {
-    Object.keys(options).forEach((key) => {
-      this[key] = options[key];
-    });
+  static get defaults() {
+    return {
+      fps: 60,
+      width: 400,
+      height: 400,
+      debug: {
+        fps: false,
+        memory: false,
+        tiles: false,
+      },
+    };
+  }
+
+  merge(target, source) {
+    const output = Object.assign({}, target);
+
+    if (typeof target === 'object' && typeof source === 'object') {
+      Object.keys(source).forEach((key) => {
+        if (typeof source[key] === 'object') {
+          if (!(key in target)) {
+            Object.assign(output, { [key]: source[key] });
+          } else {
+            output[key] = this.merge(target[key], source[key]);
+          }
+        } else {
+          Object.assign(output, { [key]: source[key] });
+        }
+      });
+    }
+
+    return output;
   }
 }

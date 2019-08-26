@@ -28,12 +28,15 @@ npm run serve
 - Space - turbo
 
 ### TODO: bugs, features, performance issues, tech debt, code problems
+- REFACTOR: add config debug helper for component with usage: config.debug('fps'). should works with structure config: {enabled: true, component: { fps: true }} 
+- REFACTOR: check all config variables and refactor the Config class with override() method and kind of deepMerging feature
 - BUG: sometimes game speed slows and comes back after page refresh (probably game loop timing function problems)
 - BUG: when mario touch hiding koopa, mario dies at once
 - FEATURE: add game over scene
 - FEATURE: koopa in panic state should kill another enemies
 - FEATURE: win condition with flag jump
 - FEATURE: level checkpoints
+- FEATURE: walking entities should turns away on when touching
 - FEATURE: player lives
 - FEATURE: score
 - FEATURE: moving to the next level 
@@ -43,7 +46,6 @@ npm run serve
 - REFACTOR: extract all if-statements outside of update() render() functions if they are static
 - REFACTOR: move all level load declarations into JSON
 - REFACTOR: use object/array destruction with json spec parsing
-- REFACTOR: check all config variables and refactor the Config class with override() method and kind of deepMerging feature
 - REFACTOR: swap console.log alerts on super classes with throwing an errors
 - REFACTOR: refactor all references from the component or entity to game scene methods with EventBus pattern 
 - REFACTOR: think about replacing all promises with async / await calls
