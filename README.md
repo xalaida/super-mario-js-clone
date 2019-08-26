@@ -1,13 +1,14 @@
-Super Mario Bros. JS clone
+'Super Mario Bros' javascript clone
 
 NEXT STEPS (refactoring):
 ~~- add doc blocks to all classes to enable a type hinting ide support~~
-- feature full 1-1 lvl with all mapped blocks
+~~- feature full 1-1 lvl with all mapped blocks~~
 ~~- add background layer with should be rendered as first layer (render simple canvas sky color background rect)~~
 ~~- add second layer with clouds and bushes (add them to another tilemap)~~
 ~~- add third layer with all collisions tilemap and collider (dynamic layer which can be updated)~~
 ~~- add debug layer which can render all debug info such as tilemap grid, hitboxes, collisions, keyboard statuses, etc.~~
 ~~- refactor all update process with the systems~~
+- add game over scene
 - extract all if-statements outside of update() render() functions if they are static
 - check all config variables and refactor the Config class with override() method and kind of deepMerging feature
 - extract objects generation outside of update() render() functions if they are static (width, vectors, etc)
