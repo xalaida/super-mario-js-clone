@@ -10,9 +10,10 @@ const config = new Config({
       height: 16,
     },
   },
-  physics: {
+  world: {
     gravity: 600,
     friction: 50,
+    height: 16 * 20,
   },
   player: {
     maxSpeed: 80,

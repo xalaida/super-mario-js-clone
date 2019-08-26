@@ -8,7 +8,7 @@ export default class GravitySystem {
    */
   constructor(entities) {
     this.entities = entities;
-    this.gravity = new Vector(0, game.config.physics.gravity);
+    this.gravity = new Vector(0, game.config.world.gravity);
   }
 
   /**
