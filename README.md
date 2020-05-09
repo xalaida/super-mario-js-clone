@@ -7,16 +7,18 @@ A javascript clone of the most popular Nintendo Super Mario Bros game.
 1. Download ZIP or clone the repository
 2. Install assets
 ```
+// Using Yarn
 yarn install
-```
-or
-```
+
+// Using NPM
 npm install
 ```
 3. Run the game server
 ```
+// Using Yarn
 yarn serve
-// or
+
+// Using NPM
 npm run serve
 ```
 4. Open your browser with URL: http://localhost:8080
